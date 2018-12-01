@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN" "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+<resources>
+  <jdbc-resource enabled="true" jndi-name="jdbc/myDatasource" object-type="user" pool-name="tcc_projeto_connection">
+    <description/>
+  </jdbc-resource>
+  <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="oracle.jdbc.pool.OracleDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="32" max-wait-time-in-millis="60000" name="oracle-thin_XE_TCC_PROJETOPool" non-transactional-connections="false" ping="false" pool-resize-quantity="2" pooling="true" res-type="javax.sql.DataSource" statement-cache-size="0" statement-leak-reclaim="false" statement-leak-timeout-in-seconds="0" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
+    <property name="serverName" value="localhost"/>
+    <property name="portNumber" value="1521"/>
+    <property name="databaseName" value="XE"/>
+    <property name="User" value="TCC_PROJETO"/>
+    <property name="Password" value="TCC_PROJETO"/>
+    <property name="URL" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+    <property name="driverClass" value="oracle.jdbc.OracleDriver"/>
+  </jdbc-connection-pool>
+  <jdbc-resource enabled="true" jndi-name="tcc_oracle_connection" object-type="user" pool-name="oracle-thin_XE_TCC_PROJETOPool"/>
+  <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="table" datasource-classname="oracle.jdbc.pool.OracleDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="32" max-wait-time-in-millis="60000" name="tcc_projeto_connection" non-transactional-connections="false" ping="false" pool-resize-quantity="2" pooling="true" res-type="javax.sql.DataSource" statement-cache-size="0" statement-leak-reclaim="false" statement-leak-timeout-in-seconds="0" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="true">
+    <property name="URL" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+    <property name="User" value="TCC_PROJETO"/>
+    <property name="Password" value="TCC_PROJETO"/>
+  </jdbc-connection-pool>
+  <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="table" datasource-classname="oracle.jdbc.pool.OracleDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="32" max-wait-time-in-millis="60000" name="tcc_oracle_projeto" non-transactional-connections="false" ping="false" pool-resize-quantity="2" pooling="true" res-type="javax.sql.DataSource" statement-cache-size="0" statement-leak-reclaim="false" statement-leak-timeout-in-seconds="0" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="true">
+    <description>Pool de Conexão para o projeto TCC</description>
+    <property name="URL" value="jdbc:oracle:thin:@Jp-PC:1521:XE"/>
+    <property name="User" value="TCC_PROJETO"/>
+    <property name="Password" value="TCC_PROJETO"/>
+  </jdbc-connection-pool>
+  <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="table" datasource-classname="oracle.jdbc.pool.OracleDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="32" max-wait-time-in-millis="60000" name="tcc_oracle_connection" non-transactional-connections="false" ping="false" pool-resize-quantity="2" pooling="true" res-type="javax.sql.DataSource" statement-cache-size="0" statement-leak-reclaim="false" statement-leak-timeout-in-seconds="0" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="true">
+    <property name="URL" value="jdbc:oracle:thin:@Jp-PC:1521:XE"/>
+    <property name="User" value="TCC_PROJETO"/>
+    <property name="Password" value="TCC_PROJETO"/>
+  </jdbc-connection-pool>
+  <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="table" datasource-classname="oracle.jdbc.pool.OracleDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="32" max-wait-time-in-millis="60000" name="tcc_oracle_connection" non-transactional-connections="false" ping="false" pool-resize-quantity="2" pooling="true" res-type="javax.sql.DataSource" statement-cache-size="0" statement-leak-reclaim="false" statement-leak-timeout-in-seconds="0" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="true">
+    <property name="URL" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+    <property name="User" value="TCC_PROJETO"/>
+    <property name="Password" value="TCC_PROJETO"/>
+  </jdbc-connection-pool>
+</resources>

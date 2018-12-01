@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<hibernate-reverse-engineering>
+  <schema-selection match-schema="TCC_PROJETO"/>
+  <table-filter match-name="TBL_CLASSIFICA_AUTO"/>
+  <table-filter match-name="TBL_SALDO"/>
+  <table-filter match-name="TBL_MOVIMENTO"/>
+  <table-filter match-name="TBL_TIPO_CONTA"/>
+  <table-filter match-name="TBL_CONTA"/>
+  <table-filter match-name="TBL_GRUPO_CATEGORIA"/>
+  <table-filter match-name="TBL_CONTA_PAGAR_RECEBER"/>
+  <table-filter match-name="TBL_USUARIO"/>
+  <table-filter match-name="TBL_CATEGORIA"/>
+  <table-filter match-name="TBL_BANCO"/>
+  <table-filter match-name="TBL_TIPO_MOVIMENTO"/>
+  <table-filter match-name="TBL_LOG_SALDO"/>
+</hibernate-reverse-engineering>

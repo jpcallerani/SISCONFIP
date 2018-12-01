@@ -1,0 +1,62 @@
+<fragment xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:p="http://primefaces.org/ui"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core" >
+    <script type="text/javascript">
+        function formatMoney() {
+            jQuery(function($){
+                $(".SaldoInicial").priceFormat({
+                    prefix: 'R$ ',
+                    centsSeparator: ',',
+                    thousandsSeparator: '.'
+                });
+            });
+        }
+        new $.Zebra_Tooltips($('.dinheiro_name'), {
+            'position': 'right'
+        });
+    </script>
+    <div id="form_container">
+        <h:form id="formAddNew">
+            <p:growl id="growl" sticky="false" life="3000" autoUpdate="false"/>
+            <p:focus for="nomeConta" />
+            <h:panelGrid columns="1" style="float:left; border: none !important; width: 50px; ">
+                <h:outputLabel for="nomeConta" value="Nome da Conta *" style="font-weight: bold; color: #0072c6; font-size: 12px;">
+                    <p:graphicImage styleClass="dinheiro_name" title="Ex: Conta Corrente/Poupança." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                </h:outputLabel>
+                <p:inputText id="nomeConta" value="#{ManageTabConta.contaNew.nome}" style="font-size: 12px;" size="40" validatorMessage="Tamanho mínimo de 5 letras"  maxlength="50" required="true" requiredMessage="Nome da conta é obrigatório">
+                    <f:validateLength minimum="1" />
+                </p:inputText>
+            </h:panelGrid>
+            <h:panelGrid columns="1" style="float:left; border: none !important; width: 100px; margin-left: 20px;">
+                <h:outputLabel for="nomeBanco" value="Banco *" style="font-weight: bold; color: #0072c6; font-size: 12px;">
+                    <p:graphicImage styleClass="dinheiro_name" title="Ex: Nome do banco da conta." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                </h:outputLabel>
+                <p:selectOneMenu id="nomeBanco" value="#{ManageTabConta.banco.id}" effect="drop" 
+                                 style="font-size: 12px; width: 200px;" panelStyle="width: 200px"
+                                 required="true" requiredMessage="Selecione um banco válido.">
+                    <f:selectItem itemLabel="Selecione" itemValue=""/>  
+                    <f:selectItems value="#{ManageTabConta.bancos}" var="banco" itemLabel="#{banco.nome}" itemValue="#{banco.id}"/>
+                </p:selectOneMenu> 
+            </h:panelGrid>
+            <h:panelGrid style="border: none !important; margin-left: -15px;">            
+                <h:panelGrid columns="1" cellpadding="10">  
+                    <h:outputLabel for="SaldoInicial" value="Saldo Inicial " style="font-weight: bold;font-size: 12px;">
+                        <p:graphicImage styleClass="dinheiro_name" title="Saldo disponível em conta." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="SaldoInicial" styleClass="SaldoInicial" onfocus="formatMoney();" 
+                                 value="#{ManageTabConta.contaNew.saldoInicial}" size="19"  maxlength="50"
+                                 style="margin-top: -20px; margin-bottom: 10px; text-align: right; font-size: 12px; font-weight: bold">
+                        <f:convertNumber pattern="R$ #,##0.00" />
+                    </p:inputText>
+                </h:panelGrid>  
+            </h:panelGrid>
+            <p:commandButton value="Salvar" icon="save_button" style="font-size: 12px;" action="#{ManageTabConta.insertNewConta()}" 
+                             process="@form" update="formAddNew growl"
+                             oncomplete="window.location.reload()">
+                <f:ajax execute="@this" render="@none" />  
+                <f:ajax execute="@none" render="growl" />  
+            </p:commandButton>  
+        </h:form>
+    </div>
+</fragment>

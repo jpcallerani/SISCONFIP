@@ -1,0 +1,93 @@
+.ui-panelgrid tr {
+    border: none !important;
+}
+
+.ui-panelgrid td {
+    background-color: #f7f7f7 !important;
+    border: none !important;
+}
+
+.style_direita.ui-panel .ui-panel-titlebar {
+    background: none !important;
+    border: none !important;
+}
+
+table.jqplot-table-legend, table.jqplot-cursor-legend {
+    height: 63px;
+    width: 42px;
+    z-index: 3;
+    right: 10px;
+    top: 116px;
+}
+
+.jqplot-table-legend {
+    font-size: 8px;
+}
+
+.positivo {
+    color: #337D2C;
+}
+
+.negativo {
+    color: #D50000;
+}
+
+.conta {
+    font-family: Arial,Times,serif;
+    font-size: 11px;
+    color: #424548;
+    font-weight: bold;
+}
+
+.jqplot-xaxis-label {
+    color: white;   
+}
+
+.save_button {
+    background-image: url(../img/icon_save.png) !important;
+    margin-top: -13px !important;
+    margin-left: -5px !important;
+    width: 22px !important;
+    height: 22px !important;
+}
+
+.cancel_button {
+    background-image: url(../img/icon_cancel.png) !important;
+    margin-top: -13px !important;
+    margin-left: -5px !important;
+    width: 22px !important;
+    height: 22px !important;
+}
+
+#home_container {
+    width: 1200px;
+    padding:10px; 
+}
+
+#list_contas {
+    float:left; 
+    width:475px; 
+    height:250px;
+    margin-right: 10px; 
+}
+
+#contas_pag_rec {	
+    float:left;
+    width:650px; 
+    height:250px;
+    margin-right: 10px;
+}
+
+#grafico_linha {
+    float:left; 
+    width:475px; 
+    height:250px;
+}
+
+#home_news {
+    float:left; 
+    width:630px; 
+    height:220px;
+    margin-left: 10px;
+    margin-top: 5px;
+}

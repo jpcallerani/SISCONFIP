@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head>      
+        <title>SISCONFIP</title>    
+    </h:head>   
+    <h:body>
+        <ui:composition template="./resources/template/indexTemplate.xhtml">
+            <ui:define name="centro"> 
+                <p:outputPanel layout="block" style="font-size: 12px; 
+                               height: 332px; 
+                               width: 550px; 
+                               background: url('./resources/img/apresentacao.png') !important;
+                               margin-left: 30%;  
+                               margin-top: 1%;">
+
+                    <h:panelGrid columns="10" id="formulario" style="height: 100px;
+                                 width: auto; 
+                                 border: none !important; 
+                                 left: 6%;
+                                 top: 14%;
+                                 position: relative;">
+                        <img src="resources/img/finance.png"/>
+                        <h:outputText escape="false" style="text-align: justify"
+                                      value="#{ManageApresentacao.texto}" />
+                    </h:panelGrid>
+
+                </p:outputPanel>
+            </ui:define>
+        </ui:composition>
+    </h:body>  
+</html>
+

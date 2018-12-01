@@ -1,0 +1,163 @@
+<fragment
+    xmlns="http://www.w3.org/1999/xhtml"  
+    xmlns:h="http://java.sun.com/jsf/html"  
+    xmlns:f="http://java.sun.com/jsf/core"  
+    xmlns:p="http://primefaces.org/ui">
+
+    <h:body>
+        <div id="home_container">
+            <p:outputPanel id="all_contas" layout="block">
+                <h:form>
+                    <p:remoteCommand name="carregaInformacoes" update=":tabPrincipal:all_contas :sidebar" actionListener="#{ManageTabHome.carregaInformacoes()}" process="@this" />
+                </h:form>
+                <div id="list_contas">
+                    <h:outputLabel value="Minhas Finanças: " styleClass="tcc_font_family" style="font-size: 16px; color: #424548; text-shadow: 1px 1px 0 #e3e3e3; font-weight: bold;" />
+                    <h:outputLabel value="#{ManageTabHome.retornaSaldoDinheiro(ManageTabHome.saldo)}" styleClass="#{ManageTabHome.retornaPosNeg(ManageTabHome.saldo)} tcc_font_family" style="font-size: 16px; font-weight: bold;" />
+                    
+                    <p:scrollPanel style="width: 480px; height: 210px; margin-top: 10px; background-color: #f7f7f7; border-color: #e3e3e3; overflow-y:hidden;" >
+                        <p:dataTable id="tableconta" style="height: 170px;"
+                                     emptyMessage="Nenhum registro encontrado." var="contas" value="#{ManageTabHome.conta}"
+                                     styleClass="noheader"
+                                     paginatorPosition="bottom" paginatorAlwaysVisible="false" scrollable="false">
+                            <!-- ###### -->
+                            <p:column headerText="Conta" style="border: none !important; ">
+                                <h:outputLabel value="#{contas.nome}"/>
+                            </p:column>  
+                            <p:column headerText="Saldo" style="border: none !important; text-align: right; ">
+                                <h:outputLabel value="#{ManageTabHome.retornaSaldoConta(contas.saldoInicial)}"/>
+                            </p:column>  
+                            <!-- ###### -->
+                        </p:dataTable> 
+                        <p:separator style="margin-top: 8px;"/>
+                        <p:panelGrid styleClass="tcc_font_family" style="margin-top: -3px; border: none !important; width: 470px; font-weight: bold; color: #000000; font-size: 14px">
+                            <p:row>
+                                <p:column  rowspan="2">
+                                    <h:outputLabel value="Saldo Consolidado"/>
+                                </p:column>
+                                <p:column  rowspan="2" style="text-align: right">
+                                    <h:outputLabel styleClass="#{ManageTabHome.retornaPosNeg(ManageTabHome.saldoConsolidado)}" value="#{ManageTabHome.retornaSaldoDinheiro(ManageTabHome.saldoConsolidado)}" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:scrollPanel>
+                </div>
+                <!--
+                PAINEL PARA CONTAS A PAGAR
+                -->
+                <div id="contas_pag_rec">
+                    <p:panel id="pagar" styleClass="style_direita" style="height: 206px; width: 300px; float: left; margin-top: 25px; border-color: #e3e3e3; background-color: #f7f7f7">
+                        <f:facet name="header">
+                            <p:graphicImage url="./resources/img/money_minus.png"/>
+                            <h:outputLabel value="Contas a Pagar" styleClass="tcc_font_family font_12" style="top: -3px; position: relative;"/>
+                        </f:facet>
+                        <p:scrollPanel style="background-color: #f7f7f7; border: none !important; height: 177px;">
+                            <p:dataTable id="tablecontaPagar" style="height: 137px;"
+                                         emptyMessage="Nenhum registro encontrado." var="contasPag" value="#{ManageTabHome.contasPag}" 
+                                         paginator="true" rows="5"
+                                         styleClass="noheader" 
+                                         paginatorPosition="bottom" paginatorAlwaysVisible="false">
+                                <!-- ###### -->
+                                <p:column headerText="Data" style="border: none !important; ">
+                                    <h:outputLabel title="#{contasPag.descricao}" value="#{ManageTabHome.retornaData(contasPag.dataMovimento)}"/>
+                                </p:column>  
+                                <p:column headerText="Valor" style="border: none !important; text-align: right; ">
+                                    <h:outputLabel  title="#{contasPag.descricao}" value="#{ManageTabHome.retornaSaldoConta(contasPag.valor)}"/>
+                                </p:column>  
+                                <!-- ###### -->
+                            </p:dataTable> 
+                            <p:separator style="margin-top: 8px;"/>
+                            <p:panelGrid styleClass="tcc_font_family" style="margin-top: -3px; border: none !important; width: 280px; font-weight: bold; color: #000000; font-size: 14px">
+                                <p:row>
+                                    <p:column  rowspan="2">
+                                        <h:outputLabel value="Total:" />
+                                    </p:column>
+                                    <p:column  rowspan="2" style="text-align: right">
+                                        <h:outputLabel styleClass="negativo" value="#{ManageTabHome.retornaSaldoDinheiro(ManageTabHome.saldoContasPagar)}" />
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:scrollPanel>
+                    </p:panel> 
+                    <p:panel id="receber" styleClass="style_direita" style="height: 206px; width: 300px; margin-left: 10px; float: left; margin-top: 25px; border-color: #e3e3e3; background-color: #f7f7f7">
+                        <f:facet name="header">
+                            <p:graphicImage url="./resources/img/money.png"/>
+                            <h:outputLabel value="Contas a Receber" styleClass="tcc_font_family font_12" style="top: -3px; position: relative;"/>
+                        </f:facet>
+                        <p:scrollPanel style="background-color: #f7f7f7; border: none !important; height: 177px;">
+                            <p:dataTable id="tablecontaRec" style="height: 137px;"
+                                         emptyMessage="Nenhum registro encontrado." var="contasRec" value="#{ManageTabHome.contasRec}" 
+                                         paginator="true" rows="5"
+                                         styleClass="noheader"
+                                         paginatorPosition="bottom" paginatorAlwaysVisible="false">
+                                <!-- ###### -->
+                                <p:column headerText="Data" style="border: none !important; ">
+                                    <h:outputLabel title="#{contasRec.descricao}" value="#{ManageTabHome.retornaData(contasRec.dataMovimento)}"/>
+                                </p:column>  
+                                <p:column headerText="Valor" style="border: none !important; text-align: right; ">
+                                    <h:outputLabel title="#{contasRec.descricao}" value="#{ManageTabHome.retornaSaldoConta(contasRec.valor)}"/>
+                                </p:column>  
+                                <!-- ###### -->
+                            </p:dataTable> 
+                            <p:separator style="margin-top: 8px;"/>
+                            <p:panelGrid styleClass="tcc_font_family" style="margin-top: -3px; border: none !important; width: 280px; font-weight: bold; color: #000000; font-size: 14px">
+                                <p:row>
+                                    <p:column  rowspan="2">
+                                        <h:outputLabel value="Total:" />
+                                    </p:column>
+                                    <p:column  rowspan="2" style="text-align: right">
+                                        <h:outputLabel styleClass="positivo" value="#{ManageTabHome.retornaSaldoDinheiro(ManageTabHome.saldoContasReceber)}" />
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:scrollPanel>
+                    </p:panel> 
+                </div>
+
+                <div id="grafico_linha">
+                    <p:lineChart id="linechart" seriesColors="424548" value="#{ManageTabHome.linearModel}" style="width: 480px; height: 240px;" widgetVar="chart"/>
+                </div>
+            </p:outputPanel>
+            <div id="home_news">
+                <p:panel id="news" styleClass="style_direita" style="height: 220px; width: 617px; float: left; border-color: #e3e3e3; background-color: #f7f7f7">
+                    <f:facet name="header">
+                        <p:graphicImage url="./resources/img/news_paper.png"/>
+                        <h:outputLabel value="Notícias" style="top: -3px; position: relative"/>
+                        <p:outputPanel layout="block" id="table_feed" style="float:right">
+                            <h:form prependId="false">
+                                <p:graphicImage styleClass="table_feed" title="Recarregar Feeds" url="./resources/img/reload.png" onclick="update_feeds()" style="cursor: pointer;"/> 
+                           </h:form>
+                        </p:outputPanel>
+                    </f:facet>
+                    <p:scrollPanel id="scroll_feed" style="height: 180px; margin-top: -10px" mode="native">
+                        <h:form prependId="false">
+                            <p:remoteCommand name="update_feeds" process="@this" update=":tabPrincipal:scroll_feed" />
+                        </h:form>
+                        <p:feedReader value="#{ManageTabHome.retornaUrlFeed()}" size="10" var="feed">
+                            <p:panel style="margin: 5px 5px 5px 5px; background-color: #f7f7f7;">
+                                <p:graphicImage style="margin-right: 10px;" url="./resources/img/feed.png"/>
+                                <a href="#{feed.link}" target="_blank"><h:outputText value="#{feed.title}" styleClass=" font_12" style="font-weight: bold;"/></a>
+                                <br />  
+                                <br />
+                                <h:outputText value="#{feed.description.value}" style="font-family: tahoma, verdana" styleClass=" font_12" escape="false"/>  
+                            </p:panel>
+                        </p:feedReader> 
+                    </p:scrollPanel>
+                </p:panel> 
+            </div>
+
+            <div style="clear:both">  </div>
+            <script type="text/javascript">
+                $('.table_feed').poshytip({
+                    className: 'tip-twitter',
+                    showTimeout: 1,
+                    alignTo: 'target',
+                    alignX: 'center',
+                    offsetY: 5,
+                    allowTipHover: false,
+                    fade: false,
+                    slide: false
+                });
+            </script>
+        </div> <!--end Column_Continer--> 
+    </h:body>
+</fragment>

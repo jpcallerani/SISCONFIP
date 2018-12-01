@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="dateTime">org.joda.time.contrib.hibernate.PersistentDateTime</property> 
+        <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
+        <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@localhost:1521:XE</property>
+        <property name="hibernate.connection.username">TCC_PROJETO</property>
+        <property name="hibernate.connection.password">TCC_PROJETO</property>
+        <!-- JDBC connection pool (use the built-in) -->
+        <property name="connection.pool_size">32</property>
+        <!-- Important! addendum to what is in text -->
+        <property name="hibernate.query.factory_class">org.hibernate.hql.classic.ClassicQueryTranslatorFactory</property>
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">thread</property>
+        <!-- Disable the second-level cache  -->
+        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+        <!-- Echo all executed SQL to stdout - You can disable this once you have it working -->
+        <property name="show_sql">false</property>
+        <mapping class="br.com.tcc.modal.TblUsuario"/>
+        <mapping class="br.com.tcc.modal.TblGrupoCategoria"/>
+        <mapping class="br.com.tcc.modal.TblMovimento"/>
+        <mapping class="br.com.tcc.modal.TblContaPagarReceber"/>
+        <mapping class="br.com.tcc.modal.TblTipoMovimento"/>
+        <mapping class="br.com.tcc.modal.TblTipoConta"/>
+        <mapping class="br.com.tcc.modal.TblCategoria"/>
+        <mapping class="br.com.tcc.modal.TblConta"/>
+        <mapping class="br.com.tcc.modal.TblBanco"/>
+        <mapping  class="br.com.tcc.modal.TblClassificaAuto"/>
+        <mapping  class="br.com.tcc.modal.TblLogSaldo"/>
+    </session-factory>
+</hibernate-configuration>

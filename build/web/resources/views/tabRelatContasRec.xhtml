@@ -1,0 +1,100 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:pe="http://primefaces.org/ui/extensions"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:f="http://java.sun.com/jsf/core" 
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <script type="text/javascript" src="./resources/js/tcc_util.js"></script>
+    <link href="./resources/css/tabRelatContasPagRec.css"   rel="stylesheet" type="text/css" />
+
+    <p:outputPanel layout="block" id="conteudoRelatContaRec">
+        <p:fieldset legend="Relatório de Contas a Receber" style="text-shadow: 1px; width: auto; font-size: 14px; background: transparent !important" styleClass="groupbox font_12 tcc_font_family">
+            <h:form id="formRec">
+                <p:growl id="growlRelatContasRec" sticky="false" life="5000" autoUpdate="false"/>
+                <p:outputPanel id="relat_conta_rec" layout="block">
+                    <p:panelGrid id="grid_agrup_rec" styleClass="font_12 tcc_font_family" style="border: none !important; background: transparent !important">
+                        <p:row>
+                            <p:column colspan="1">
+                                <h:outputLabel styleClass="bold" value="Agrupar por:">
+                                    <p:graphicImage styleClass="relat_tooltip_rec" title="Forma na qual será agrupado o relatório." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                                </h:outputLabel>  
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:selectOneRadio id="options" value="#{ManageTabRelatContasRec.groupBy}">  
+                                    <f:selectItem itemLabel="Categoria" itemValue="Categoria"/>  
+                                    <f:selectItem itemLabel="Data Vencimento" itemValue="Data Vencimento" />
+                                </p:selectOneRadio>  
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:separator style="margin: 10px 0px 10px 0px"/>
+                    <p:panelGrid id="grid_data_rec" styleClass="font_12 tcc_font_family" style="border: none !important; background: transparent !important">
+                        <p:row>
+                            <p:column colspan="1">
+                                <h:outputLabel styleClass="bold" value="Vencimento:">
+                                    <p:graphicImage styleClass="relat_tooltip_rec" title="Gerar relatório por data de Vencimento." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:calendar effect="drop" style="font-size: 12px;" size="14" value="#{ManageTabRelatContasRec.dataVencimentoIni}"  
+                                            pattern="dd/MM/yyyy" converterMessage="Data Vencimento inválida.">
+                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                                </p:calendar>
+                                <h:outputLabel value="até" style="font-size: 11px; font-weight: bold; margin: 0px 7px 0px 5px"/>
+                                <p:calendar effect="drop" style="font-size: 12px;" size="14" value="#{ManageTabRelatContasRec.dataVencimentoFim}"  
+                                            pattern="dd/MM/yyyy" converterMessage="Data Vencimento inválida.">
+                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                                </p:calendar>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="1">
+                                <h:outputLabel styleClass="bold" value="Data de Recebimento">
+                                    <p:graphicImage styleClass="relat_tooltip_rec" title="Gerar relatório por data de recebimento." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:calendar effect="drop" style="font-size: 12px;" size="14" value="#{ManageTabRelatContasRec.dataPagamentoIni}"  
+                                            pattern="dd/MM/yyyy" converterMessage="Data Recebimento inválida.">
+                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                                </p:calendar>
+                                <h:outputLabel value="até" style="font-size: 11px; font-weight: bold; margin: 0px 7px 0px 5px"/>
+                                <p:calendar effect="drop" style="font-size: 12px;" size="14" value="#{ManageTabRelatContasRec.dataPagamentoFim}"  
+                                            pattern="dd/MM/yyyy" converterMessage="Data Recebimento inválida.">
+                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                                </p:calendar>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="1">
+                                <h:outputLabel styleClass="bold" value="Exibir apenas:">
+                                    <p:graphicImage styleClass="relat_tooltip_rec" title="Exibir apenas as contas do tipo selecionado." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:selectManyCheckbox value="#{ManageTabRelatContasRec.tpContas}" styleClass="tcc_font_family bold font_12">  
+                                    <f:selectItem itemLabel="Vencidas" itemValue="Vencidas" />
+                                    <f:selectItem itemLabel="A Vencer" itemValue="Vencer" />
+                                    <f:selectItem itemLabel="Recebidas" itemValue="Pagas" />
+                                </p:selectManyCheckbox>  
+                            </p:column>
+                        </p:row>                        
+                    </p:panelGrid>
+                    <p:separator style="margin: 10px 0px 10px 0px"/>
+                    <p:commandButton id="button_gera_relat_contaPag" value="Gerar Relatório"  
+                                     style="width: 200px; height: 40px" icon="grafico" 
+                                     actionListener="#{ManageTabRelatContasRec.abreRelatório()}"
+                                     process="@form" update="growlRelatContasRec">
+                    </p:commandButton>
+                </p:outputPanel>
+                <script type="text/javascript">
+                    new $.Zebra_Tooltips($('.relat_tooltip_rec'), {
+                        'position': 'right'
+                    });
+                </script>
+            </h:form>
+        </p:fieldset>
+    </p:outputPanel>
+</ui:fragment>

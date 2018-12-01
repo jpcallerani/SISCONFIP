@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <h:head>
+        
+    </h:head>
+    <h:body>
+        <ui:composition template="./resources/template/indexTemplate.xhtml">
+            <ui:define name="centro">
+                <h:form> 
+                    <p:focus for="nome"/>
+                    <p:growl id="growl" sticky="true" life="10000"/>
+                    <p:outputPanel layout="block" style="font-size: 12px; 
+                                   height: 332px; 
+                                   width: 550px; 
+                                   background: url('./resources/img/cadastro.png') !important;
+                                   margin-left: 30%;  
+                                   margin-top: 1%;">
+                        <h:panelGrid columns="3" cellpadding="6" id="formulario" style="height: 100px;
+                                     width: 300px; 
+                                     border: none !important; 
+                                     left: 10%;
+                                     top: 18%;
+                                     position: relative;">
+                            <h:outputLabel style="position: relative; " value="Nome*"/>
+                            <p:inputText id="nome" required="true" value="#{ManageCadastro.usuario.nome}" size="45" 
+                                         style="font-size: 12px; font-weight: normal;" requiredMessage="Nome é obrigatório!">
+                                <f:validateLength minimum="5" maximum="100"/>  
+                            </p:inputText>
+                            <pe:tooltip for="nome" value="Digite seu nome!" showEffect="fadeIn"  
+                                        hideEffect="fadeIn" showDelay="0" position="left center" targetPosition="right center"/>  
+
+                            <h:outputLabel style="position: relative;" value="Username*"/>
+                            <p:inputText id="username" required="true" value="#{ManageCadastro.usuario.username}" validatorMessage="#{ManageCadastro.usuario.username} Tamanho mínimo de 5 letras"
+                                         size="35" style="font-size: 12px; font-weight: normal;"  requiredMessage="Username é obrigatório!">
+                                <f:validateLength minimum="5" />
+                            </p:inputText>
+                            <pe:tooltip for="username" value="Username para acesso ao sistema!" showEffect="fadeIn"
+                                        hideEffect="fadeIn" showDelay="0" position="left center" targetPosition="right center"/>
+                            <h:outputLabel style="position: relative" value="E-mail*"/>
+                            <p:inputText id="email" required="true" value="#{ManageCadastro.usuario.email}" size="35" 
+                                         validatorMessage="#{ManageCadastro.usuario.username} Email digitado é inválido!"
+                                         style="font-size: 12px; font-weight: normal;" requiredMessage="E-mail é obrigatório!">
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                            </p:inputText>
+                            <pe:tooltip for="email" value="Digite um email válido!" showEffect="fadeIn"  
+                                        hideEffect="fadeIn" showDelay="0" position="left center" targetPosition="right center"/> 
+                            <p:commandLink id="termos" value="Termos de Uso: " onclick="dlg.show();"/>  
+                            <p:selectBooleanCheckbox value="#{ManageCadastro.bol_termosUso}" required="true" requiredMessage="É necessário aceitar os termos de uso"/> 
+                        </h:panelGrid>
+                        <p:commandButton style="border: none !important; 
+                                         margin-top: 50px;
+                                         margin-left:40%;
+                                         height: 39px;
+                                         width: 70px;
+                                         color: #000000;
+                                         font-weight: bold;
+                                         font-size: 10px;" id="cadastrar" value="Cadastrar" update="growl, formulario"
+                                         actionListener="#{ManageCadastro.CadastrarNovoUsuario()}" />  
+                    </p:outputPanel>
+                    <p:dialog widgetVar="dlg" header="Termos de Uso" modal="true" showEffect="fade" hideEffect="fade" resizable="false" draggable="false" closable="true" height="300" width="500">
+                        <p:inputTextarea style="resize: none; width:455px; height:290px; font-size: 10px;" autoResize="false" value="#{ManageCadastro._termosUso}" readonly="true"/> 
+                    </p:dialog>                    
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

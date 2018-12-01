@@ -1,0 +1,65 @@
+#conteudoContaRec {
+    width: 1230px; 
+    height: 470px; 
+    margin-left: 6px;
+}
+
+.ui-datatable th, .ui-datatable tfoot td {
+    font-size: 12px;
+}
+
+.ui-datatable th div.ui-dt-c, 
+.ui-datatable .ui-datatable-data td div.ui-dt-c, 
+.ui-datatable tfoot td div.ui-dt-c {
+    font-size: 12px;
+}
+
+.style_grid_filter tr, .style_grid_filter td {  
+    border: none !important;  
+    background-color: #f9f9f9 !important
+}
+
+.add {  
+    background-image: url("../img/receber.png") !important;
+    margin-right: 5px;
+}  
+
+.fc-button-agendaDay, .fc-button-agendaWeek{
+    display: none !important;
+}
+
+.style_com .ui-button-text {
+    margin-left: 5px;
+}
+
+.fc-event {
+    font-size: 0.65em;
+}
+
+.ui-menuitem-text {
+    margin-left: 5px;
+}
+
+.style_mensagem {
+    text-spacing: 1px;
+    text-shadow: 1px;
+    font-size: 15px;
+    color: #424548; 
+    text-shadow: 1px 1px 0 #e3e3e3;
+    font-weight: bold;
+    font-family: Verdana,Times,serif;
+}
+
+.style_forms {
+    font-weight: bold; font-size: 11px;
+}
+
+.icon_love {
+    background-image: url("../img/search-submit.png") !important;
+    width: 15px !important;
+    height: 15px !important;
+}
+
+.msgbox.ui-dialog .ui-dialog-titlebar {
+   display: none !important;
+}

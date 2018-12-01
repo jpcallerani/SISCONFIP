@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core" 
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:head>
+        <script type="text/javascript" src="./resources/js/calendar.js"></script>
+        <link href="./resources/css/Principal.css"   rel="stylesheet" type="text/css" />
+        <title>SISCONFIP</title>
+        <script type="text/javascript">
+            jQuery(document).ready(function(){
+                jQuery("#ControlTransition").ajaxStart(function(){
+                    jQuery("body").css("cursor", "wait");
+                    jQuery('#ControlTransition').fadeIn(100);
+                    jQuery('.tcc_progressbar_container').animate({bottom: '0px'}, 300); 
+                    flagAjaxStatus = true;
+                });
+                jQuery("#ControlTransition").ajaxStop(function(){
+                    jQuery("body").css("cursor", "default");
+                    jQuery('#ControlTransition').fadeOut(100);
+                    jQuery('.tcc_progressbar_container').animate({bottom: '-36px'}, 300); 
+                    flagAjaxStatus = false;
+                });
+            });
+        </script>
+        <script type="text/javascript">
+            var chartStyle = {
+                padding:20,
+                legend: {
+                    display:"right",
+                    spacing:10
+                }
+            };
+        </script>
+    </h:head>
+
+    <h:body>
+        <div id="ControlTransition" style="display: none;" class="transition"></div>
+
+        <div id="header">
+            <h:form>
+                <div class="logotipo">
+
+                </div>
+                <div class="welcome">
+                    <p:graphicImage alt="Usuário" style="padding-left: 25px;" url="./resources/img/username_background.png"/>
+                    <p:spacer width="10"/>
+                    <h:outputLabel style="font-family: Arial, Geneva, sans-serif; font-size: 11px;" id="nome" value="#{ManagePrincipal.usuario.nome}"/>
+                    <p:spacer width="10"/>
+                    <h:outputLabel style="font-family: Arial, Geneva, sans-serif; font-size: 11px;" id="username" value="[#{ManagePrincipal.usuario.username}]"/>
+                </div>
+                <p:commandLink id="logoff" styleClass="logoff" ajax="false" action="#{ManagePrincipal.logoff('index')}"/>
+                <pe:tooltip for="logoff" value="Sair do sistema" showEffect="fadeIn"  
+                            hideEffect="fadeIn" showDelay="0" position="right center" targetPosition="left center"/>
+            </h:form>
+
+        </div>
+
+        <div id="menu">
+            <h:form>  
+                <p:growl id="messages"/>  
+                <p:menubar style="font-size: 11px; font-family: Arial, Geneva, sans-serif;">  
+                    <p:submenu label="Cadastros" icon="menu_cadastro">            
+                        <p:menuitem id="contas" value="Conta" action="#{ManagePrincipal.addTab('Conta')}" update=":tabView"/>
+                        <p:menuitem id="categoria" value="Categoria" action="#{ManagePrincipal.addTab('Categoria')}" update=":tabView"/>
+                    </p:submenu>  
+                    <p:submenu label="Gestão de Contas" icon="menu_gestao">
+                        <p:menuitem id="movimentos" value="Movimentos" action="#{ManagePrincipal.addTab('Movimentos')}" update=":tabView"></p:menuitem>
+                        <p:menuitem value="Contas a Pagar" url="#"></p:menuitem>  
+                        <p:menuitem value="Contas a Receber" url="#"></p:menuitem>  
+                    </p:submenu>  
+                    <p:submenu label="Relatórios" icon="menu_relatorio">  
+                        <p:menuitem value="Pagamentos x Recebimentos"/>  
+                        <p:menuitem value="Contas a Pagar"/>
+                        <p:menuitem value="Contas a Receber" />
+                        <p:menuitem value="Movimentos"/>
+                        <p:menuitem value="Fluxo Previsto Mensal"/>
+                        <p:menuitem value="Fluxo Total"/>
+                    </p:submenu> 
+                    <p:menuitem value="Ajuda" icon="menu_ajuda" />
+                </p:menubar>  
+            </h:form> 
+        </div>
+
+        <div id="content">
+            <pe:layout fullPage="false" style="width: 100%; height:625px;" >
+                <pe:layoutPane position="east" size="210" minSize="210" maxSize="210">
+                    <p:calendar mode="inline" style="font-size: 10px;" id="inlineCal"/>
+                </pe:layoutPane>  
+                <pe:layoutPane position="center" minWidth="200">  
+                    <p:tabView id="tabView" onTabChange="" style="font-size: 10px; height: 563px;" activeIndex="#{ManagePrincipal.activeIndex}" dynamic="true"> 
+                        <p:ajax event="tabClose" listener="#{ManagePrincipal.onTabClose}" />  
+                        <p:ajax event="tabChange" listener="#{ManagePrincipal.onTabChange}" update="financeiro"/>
+                        <c:forEach items="#{ManagePrincipal.tabList}" var="tabItem"> 
+                            <p:tab title="#{tabItem.name}" id="#{tabItem.name}" closable="#{tabItem.closable}">                                    
+                                <f:facet name="title">
+                                    <p:graphicImage rendered="#{tabItem.name.equals('Home')}" url="#{tabItem.title}"/>
+                                    <h:outputText rendered="#{!tabItem.name.equals('Home')}" value="#{tabItem.name}" />
+                                </f:facet>
+                                <ui:include src="#{tabItem.url}"/>
+                            </p:tab>   
+                        </c:forEach>
+                    </p:tabView> 
+                </pe:layoutPane>
+                <pe:layoutPane position="south" size="28" resizable="false" closable="false"  
+                               spacing="3" statusbar="true">  
+                </pe:layoutPane>  
+            </pe:layout>    
+        </div>
+        <div class="tcc_progressbar_container" style="bottom: -36px; ">
+            <div class="tcc_progressbar"></div>
+        </div>
+    </h:body>
+</html>

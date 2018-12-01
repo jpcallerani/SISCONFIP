@@ -1,0 +1,131 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:pe="http://primefaces.org/ui/extensions"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:f="http://java.sun.com/jsf/core" 
+             xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <link href="./resources/css/tabConta.css"   rel="stylesheet" type="text/css" />
+    
+    <div id="conteudoConta">
+        <p:tabView id="tabControl" effect="clip" activeIndex="#{ManageTabConta.activeIndex}" style="height: auto; width: 1100px; border: none !important; background-color: #f9f9f9; border-color: #e3e3e3"> 
+            <p:tab id="Consulta" closable="false" >                                    
+                <f:facet name="title">
+                    <p:graphicImage url="/resources/img/tab_content_search.png"/>
+                </f:facet>
+                <h:form id="formSearch" prependId="false">
+                    <p:focus for="nome" />
+                    <p:fieldset legend="Pesquisa" styleClass="groupbox" style="margin-left: -12px; width: auto; font-size: 14px; font-family: arial;">
+                        <h:panelGrid id="grid_search" columns="4" style="width: 680px; border: none !important;">
+                            <p:outputLabel for="nome" value="Nome" style="font-size: 12px; font-weight: bold;"/>
+                            <p:inputText id="nome" size="30" style="font-size: 12px;" value="#{ManageTabConta.conta.nome}"/>
+                            <p:outputLabel for="combo_type" value="Tipo de Conta" style="font-size: 12px; font-weight: bold; width: 150px"/>
+                            <p:selectOneMenu id="combo_type" value="#{ManageTabConta.tipoConta.id}" effect="drop" style="font-size: 12px; font-weight: bold; width: 220px;">
+                                <f:selectItem itemLabel="Selecione" itemValue="0"/>
+                                <f:selectItem itemLabel="Cartão de Crédito" itemValue="1"/>
+                                <f:selectItem itemLabel="Conta Bancária" itemValue="2"/>
+                                <f:selectItem itemLabel="Dinheiro" itemValue="3"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <p:commandButton value="Executar Consulta" style="margin-left: 1px; top: 20px; margin-bottom: 40px; font-size: 12px;" 
+                                         id="button_search"
+                                         update=":tabPrincipal:tabControl"
+                                         actionListener="#{ManageTabConta.findContas()}" />
+                    </p:fieldset>
+                </h:form> 
+            </p:tab>
+            <p:tab title="List" id="List" closable="false">                                    
+                <f:facet name="title">
+                    <p:graphicImage url="/resources/img/tab_content_list.png"/>
+                </f:facet>
+                <h:form id="formList" prependId="false">
+                    <script type="text/javascript">
+                        $('.remover').click(function () {
+                            $.Zebra_Dialog('Deseja <strong>realmente</strong> excluir a linha selcionada?', {
+                                'type':     'question',
+                                'title':    'Atenção',
+                                'buttons':  ['Sim!', 'Não!'],
+                                'onClose':  function(caption) {
+                                    if(caption == 'Sim!'){
+                                        deleteConta();
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                    <p:growl id="growl" sticky="false" life="5000" autoUpdate="false"/>
+                    <p:fieldset legend="Resultado" styleClass="groupbox" style="margin-left: -12px; width: auto; font-size: 14px; font-family: arial;">
+                        <p:contextMenu for="contas">  
+                            <p:menuitem styleClass="remover" style="font-size: 11px; font-weight: bold " value="Remover Conta" icon="exit" />
+                        </p:contextMenu>
+                        <p:remoteCommand name="deleteConta" update="contas growl" process="@this"  actionListener="#{ManageTabConta.deleteConta()}"/>
+                        <p:dataTable id="contas" paginatorPosition="bottom" var="conta"
+                                     emptyMessage=" Nenhuma linha encontrada."  
+                                     paginatorAlwaysVisible="false"
+                                     value="#{ManageTabConta.contas}" rowKey="#{conta.id}"
+                                     selectionMode="single" paginator="true" rows="10"
+                                     selection="#{ManageTabConta.selectedConta}">
+                            <p:ajax event="rowSelect" listener="#{ManageTabConta.onRowSelect}" />
+                            <p:column headerText="id" width="1" rendered="false" style="font-size: 10px">
+                                #{conta.id}
+                            </p:column>  
+
+                            <p:column headerText="Nome">
+                                #{conta.nome}
+                            </p:column>  
+
+                            <p:column headerText="Banco">
+                                #{conta.idBanco.nome}  
+                            </p:column>  
+
+                            <p:column headerText="Tipo de Conta" style="text-align: center; width: 130px">
+                                #{conta.idTipoConta.nome}  
+                            </p:column>  
+
+                            <p:column headerText="Validade Fatura" style="text-align: center; width: 100px">
+                                #{ManageTabConta.dateFormat(conta.dataValidade)}  
+                            </p:column>
+
+                            <p:column headerText="Limite Cartão" style="text-align: right; width: 50px">
+                                #{ManageTabConta.moneyFormat(conta.limiteCartao)}
+                            </p:column>
+
+                            <p:column headerText="Saldo Inicial" style="text-align: right; width: 50px">
+                                #{ManageTabConta.moneyFormat(conta.saldoInicial)}
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:graphicImage url="./resources/img/icon_help.png" />
+                                <h:outputText value="Clique com o botão direito sobre a linha para abrir o painel de opções." />
+                            </f:facet>
+                        </p:dataTable>
+                    </p:fieldset> 
+                </h:form>
+            </p:tab>
+            <p:tab title="New" id="New" closable="false">                                    
+                <f:facet name="title">
+                    <p:graphicImage url="/resources/img/tab_content_new.png"/>
+                </f:facet>
+                <h:form id="formNew">
+                    <p:fieldset legend="Novo" styleClass="groupbox" style="margin-left: -12px; width: auto; font-size: 14px; font-family: arial;">
+                        <p:outputPanel layout="block" id="outPutNew" style="height: 290px; font-size: 10px; margin-top: 50px">
+                            <h:panelGrid id="gridNew" columns="1" style="float:left; border: none !important; width: 150px; ">
+                                <p:outputLabel for="combo_type2" value="Tipo de Conta" style="font-weight: bold; font-size: 12px; margin-left: 14px;"/>
+                                <p:selectOneMenu id="combo_type2" value="#{ManageTabConta.tipoContaNew.id}"  effect="drop" style="font-size: 12px; width: 150px;">
+                                    <f:selectItem itemLabel="Selecione" itemValue="0"/>  
+                                    <f:selectItem itemLabel="Cartão de Crédito" itemValue="1"/>
+                                    <f:selectItem itemLabel="Conta Bancária" itemValue="2"/>
+                                    <f:selectItem itemLabel="Dinheiro" itemValue="3"/>
+                                    <p:ajax event="change" update="dynamicFormNew" listener="#{ManageTabConta.changeDynaForm()}" />
+                                </p:selectOneMenu> 
+                            </h:panelGrid>
+                            <p:outputPanel layout="block" id="dynamicFormNew" style="float:left; width: 450px; height: 300px; margin-left: 80px; margin-top: -23px;">
+                                <ui:include src="#{ManageTabConta.returnUrlForm()}" />
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </p:fieldset>
+                </h:form>
+            </p:tab>                                
+        </p:tabView>  
+    </div>
+</ui:fragment>

@@ -1,0 +1,4 @@
+geração de id automatico oracle
+
+@SequenceGenerator(name="SEQUENCE_USUARIO", sequenceName="SEQ_ID_USUARIO", allocationSize=1) 
+@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE_USUARIO")

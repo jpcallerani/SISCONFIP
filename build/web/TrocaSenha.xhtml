@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="./resources/template/indexTemplate.xhtml">
+            <ui:define name="centro">
+                <h:form> 
+                    <p:focus for="email"/>
+                    <p:growl id="growl" sticky="true" life="10000"/>
+                    <p:outputPanel layout="block" style="font-size: 12px; 
+                                   height: 280px; 
+                                   width: 400px; 
+                                   background: url('./resources/img/TrocaSenha.png') !important;
+                                   margin-left: 35%;  
+                                   margin-top: 1%;">
+                        <h:panelGrid columns="3" id="formulario" style="height: 100px;
+                                     width: 300px; 
+                                     border: none !important; 
+                                     left: 8%;
+                                     top: 10%;
+                                     position: relative;">
+                            <h:outputLabel style="position: relative; " value="Email*"/>
+                            <p:inputText id="email" required="true" value="#{ManageTrocaSenha.email}" validatorMessage="#{ManageTrocaSenha.email} Email digitado é inválido!" size="40" style="font-size: 12px; font-weight: normal;" requiredMessage="Email é obrigatório!">
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                            </p:inputText>
+                            <pe:tooltip for="email" value="Digite seu email!" showEffect="fadeIn"  
+                                        hideEffect="fadeIn" showDelay="0" position="left center" targetPosition="right center"/> 
+                        </h:panelGrid>
+                        <p:commandButton style="border: none !important; 
+                                         margin-top: 30px;
+                                         margin-left:40%;
+                                         height: 39px;
+                                         width: 70px;
+                                         color: #000000;
+                                         font-weight: bold;
+                                         font-size: 10px;" id="cadastrar" value="Enviar" update="growl, formulario"
+                                         actionListener="#{ManageTrocaSenha.trocaSenha()}" />  
+                    </p:outputPanel>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

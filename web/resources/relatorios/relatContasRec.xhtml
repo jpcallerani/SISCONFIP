@@ -1,0 +1,182 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"> 
+    <h:head>
+        <title>Relatórios de Contas a Pagar</title>
+        <link href="../css/Principal.css"   rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../js/tcc_util.js"></script>        
+
+        <style>
+            .ui-panelgrid tr {
+                border: none !important;
+            }
+
+            .ui-panelgrid td {
+                border: none !important;
+            }
+
+        </style>
+    </h:head>
+    <h:body>
+        <div id="relatConteudoRec" style="width: 100%; height: auto">
+            <p:outputPanel layout="block" style="border-bottom: 1px #e3e3e3 solid; margin-bottom: 20px; width: 100%; height: 60px; background-color: #f7f7f7; margin-top: 0; margin-left: 0">
+                <h:panelGrid id="panel_opcoes_rec" columns="2" styleClass="tcc_font_family" style="font-size: 14px;position: absolute; width: 100px; left: 35%; margin-top: 7px">
+                    <p:commandButton style="width: 200px; height: 40px" onclick="window.print();" styleClass="alinha_icon" value="Imprimir" icon="print"/>
+                    <p:commandButton style="width: 200px; height: 40px" onclick="window.close();" styleClass="alinha_icon" value="Sair" icon="exit_door" /> 
+                </h:panelGrid>
+            </p:outputPanel>
+            <p:outputPanel layout="block">
+                <p:panelGrid id="panel_info_rec" style="border: none !important;">
+                    <p:row>
+                        <p:column colspan="7">
+                            <h:outputText value="Relatório Contas a Receber" styleClass="bold tcc_font_family" style="font-size: 12px; color: #000;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <!-- Filtro do modo de agrupamento -->
+                        <p:column colspan="1">
+                            <h:outputText value="Agrupado por: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value="#{ManageRelatContasRec.groupBy}" styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>
+                        <!-- Filtro da Data de Vencimento -->
+                        <p:column colspan="1" rendered="#{ManageRelatContasRec.dt_dataVencimentoIni != null and ManageRelatContasRec.dt_dataVencimentoFim == null}">
+                            <h:outputText value="Data Vencimento maior que: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value="#{ManageRelatContasRec.formataData(ManageRelatContasRec.dt_dataVencimentoIni)}" styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>
+                        <p:column colspan="1" rendered="#{ManageRelatContasRec.dt_dataVencimentoIni == null and ManageRelatContasRec.dt_dataVencimentoFim != null}">
+                            <h:outputText value="Data Vencimento menor que: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value="#{ManageRelatContasRec.formataData(ManageRelatContasRec.dt_dataVencimentoFim)}" styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>
+                        <p:column colspan="1" rendered="#{ManageRelatContasRec.dt_dataVencimentoIni != null and ManageRelatContasRec.dt_dataVencimentoFim != null}">
+                            <h:outputText value="Data Vencimento entre: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value="#{ManageRelatContasRec.formataData(ManageRelatContasRec.dt_dataVencimentoIni)} e #{ManageRelatContasRec.formataData(ManageRelatContasRec.dt_dataVencimentoFim)}" styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>      
+                        <!-- Filtro da Data de Pagamento -->
+                        <p:column colspan="1" rendered="#{ManageRelatContasRec.dt_dataPagamentoIni != null and ManageRelatContasRec.dt_dataPagamentoFim == null}">
+                            <h:outputText value="Data Pagamento maior que: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value="#{ManageRelatContasRec.formataData(ManageRelatContasRec.dt_dataPagamentoIni)}" styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>
+                        <p:column colspan="1" rendered="#{ManageRelatContasRec.dt_dataPagamentoIni == null and ManageRelatContasRec.dt_dataPagamentoFim != null}">
+                            <h:outputText value="Data Pagamento menor que: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value="#{ManageRelatContasRec.formataData(ManageRelatContasRec.dt_dataPagamentoFim)}" styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>
+                        <p:column colspan="1" rendered="#{ManageRelatContasRec.dt_dataPagamentoIni != null and ManageRelatContasRec.dt_dataPagamentoFim != null}">
+                            <h:outputText value="Data Pagamento entre: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value="#{ManageRelatContasRec.formataData(ManageRelatContasRec.dt_dataPagamentoIni)} e #{ManageRelatContasRec.formataData(ManageRelatContasRec.dt_dataPagamentoFim)}" styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>  
+                    </p:row>
+                    <p:row>
+                        <!-- Filtro da situação da conta -->
+                        <p:column colspan="7">
+                            <h:outputText rendered="#{ManageRelatContasRec.vencidas != null or ManageRelatContasRec.pagas != null or ManageRelatContasRec.vencer != null}" value="Somente: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value=" #{ManageRelatContasRec.vencidas} " styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value=" #{ManageRelatContasRec.vencer} " styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value=" #{ManageRelatContasRec.pagas} " styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <!-- Filtro da situação da conta -->
+                        <p:column colspan="7">
+                            <h:outputText value="Gerado em: " styleClass="bold tcc_font_family" style="font-size: 10px; color: #000;"/>
+                            <h:outputText value="#{ManageRelatContasRec.retorna_data()}" styleClass="tcc_font_family" style="font-size: 10px; color: #000;"/>
+                        </p:column>
+                    </p:row>                       
+                </p:panelGrid>
+            </p:outputPanel>
+            <p:outputPanel layout="block" style="width:100%; height: auto; margin-top: 20px">
+                <p:dataTable id="table_contas_rec" var="contasPag" style="font-size: 10px;" value="#{ManageRelatContasRec.retornaKeys()}"
+                             emptyMessage="Nenhum registro encontrado.">
+                    <p:columnGroup type="header">  
+                        <p:row>  
+                            <p:column colspan="1" style="width: 200px; max-width: 200px;">
+                                <f:facet name="header">
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px;" value="Vencimento" 
+                                                  rendered="#{ManageRelatContasRec.groupBy.equals('Categoria')}"/>
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px;" value="Categoria" 
+                                                  rendered="#{ManageRelatContasRec.groupBy.equals('Data Vencimento')}"/>
+                                </f:facet>
+                            </p:column>  
+                            <p:column colspan="1" style="width: 130px; max-width: 130px;">
+                                <f:facet name="header">
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px;" value="Nº Doc" />  
+                                </f:facet>  
+                            </p:column>  
+                            <p:column colspan="1">
+                                <f:facet name="header">
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px;" value="Descrição" />  
+                                </f:facet>  
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; width: 130px; max-width: 130px;">
+                                <f:facet name="header">
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px;" value="A receber" /> 
+                                </f:facet>   
+                            </p:column>  
+                            <p:column colspan="1" style="text-align: center; width: 130px; max-width: 130px;">
+                                <f:facet name="header">
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px;" value="Recebido" />
+                                </f:facet>
+                            </p:column>  
+                        </p:row>  
+                    </p:columnGroup> 
+                    <p:subTable var="stats" value="#{ManageRelatContasRec.retornContas(contasPag)}">
+                        <f:facet name="header">  
+                            <h:outputText styleClass="bold font_12 tcc_font_family" style="font-size: 10px;" value="#{ManageRelatContasRec.formataData(contasPag)}}" 
+                                          rendered="#{ManageRelatContasRec.groupBy.equals('Data Vencimento')}"/>
+                            <h:outputText styleClass="bold font_12 tcc_font_family" style="font-size: 10px;" value="#{contasPag}" 
+                                          rendered="#{ManageRelatContasRec.groupBy.equals('Categoria')}"/>
+                        </f:facet>  
+                        <p:column colspan="1">  
+                            <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px; text-align: center; width: 100px; max-width: 100px;" value="#{stats.idCategoria.nome eq null ? '(Sem Categoria)' : stats.idCategoria.nome}" 
+                                          rendered="#{ManageRelatContasRec.groupBy.equals('Data Vencimento')}"/>
+                            <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px; text-align: center; width: 50px; max-width: 50px;" value="#{ManageRelatContasRec.formataData(stats.dataMovimento)}" 
+                                          rendered="#{ManageRelatContasRec.groupBy.equals('Categoria')}"/>
+                        </p:column>
+                        <p:column colspan="1" style="text-align: center">  
+                            <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px;" value="#{stats.numeroDocumento}" />
+                        </p:column>
+                        <p:column colspan="1" style="text-align: center">  
+                            <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px; text-align: center; width: 200px; max-width: 200px;" value="#{stats.descricao}" />
+                        </p:column>  
+                        <p:column colspan="1" style="text-align: right">  
+                            <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px; " value="#{stats.pago eq 'S' ? ManageRelatContasRec.formataValor(0.0) : ManageRelatContasRec.formataValor(stats.valor)}" />
+                        </p:column>
+                        <p:column colspan="1" style="text-align: right">  
+                            <h:outputText styleClass="bold tcc_font_family" style="font-size: 10px; text-align: center" value="#{stats.pago eq 'N' ? ManageRelatContasRec.formataValor(0.0) : ManageRelatContasRec.formataValor(stats.valor)}" />
+                        </p:column>
+                    </p:subTable>
+                    <p:columnGroup type="footer">  
+                        <p:row>
+                            <p:column colspan="1">
+                                <f:facet name="footer">
+                                    <h:outputText value=" " />
+                                </f:facet>
+                            </p:column>
+                            <p:column colspan="1">
+                                <f:facet name="footer">
+                                    <h:outputText value=" " />
+                                </f:facet>                            
+                            </p:column>
+                            <p:column colspan="1" style="text-align: right; text-decoration: underline">
+                                <f:facet name="footer">
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 11px;" value="Total:" />
+                                </f:facet>                            
+                            </p:column>
+                            <p:column colspan="1" style="text-align: right; text-decoration: underline">
+                                <f:facet name="footer">
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 11px;" value="#{ManageRelatContasRec.retornaSaldo()}" />
+                                </f:facet>
+                            </p:column>
+                            <p:column colspan="1" style="text-align: right; text-decoration: underline">
+                                <f:facet name="footer">
+                                    <h:outputText styleClass="bold tcc_font_family" style="font-size: 11px;" value="#{ManageRelatContasRec.retornaSaldoPag()}" />
+                                </f:facet>
+                            </p:column>
+                        </p:row>
+                    </p:columnGroup>
+                </p:dataTable>  
+            </p:outputPanel>
+        </div>
+    </h:body>
+</html>

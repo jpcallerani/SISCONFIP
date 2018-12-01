@@ -1,0 +1,452 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:pe="http://primefaces.org/ui/extensions"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:f="http://java.sun.com/jsf/core" 
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <link href="./resources/css/tabContasReceber.css"   rel="stylesheet" type="text/css" />
+
+    <p:outputPanel layout="block" id="conteudoContaRec">
+        <h:form prependId="false" style="margin-top: 15px;">
+            <p:commandButton id="button_filter" styleClass="btn_filter" style="top: -9px;" icon="icon_love" value="Filtro" onclick="updateConta()"/>
+            <p:remoteCommand name="updateConta" update="group_filtro" process="@this"  actionListener="#{ManageTabContasReceber.findContas()}"/>
+            <p:graphicImage styleClass="help_receber" title="Clique para realizar uma busca avançada." style="margin-left: 5px; margin-bottom: 5px" url="/resources/img/tooltip/tooltip_icon.gif" />
+            <p:remoteCommand name="updateMensagemValor" update="mensagem" process="@this" actionListener="#{ManageTabContasReceber.returnWorthRec()}"/>
+            <p:fieldset  styleClass="groupbox" style="float: right">
+                <h:outputLabel styleClass="style_mensagem" value="Você tem "/>
+                <h:outputLabel id="mensagem" styleClass="style_mensagem" style="color: #337D2C;" value="#{ManageTabContasReceber.returnWorthRec()}"/>
+                <h:outputLabel styleClass="style_mensagem" value=" a receber."/>
+            </p:fieldset>
+            <p:outputPanel id="div_filter" styleClass="style_div" layout="block">
+                <script type="text/javascript">
+
+                    $(".style_div").hide();
+        
+                    new $.Zebra_Tooltips($('.help_receber'), {
+                        'position': 'right'
+                    });
+                        
+                    $(".btn_filter").click(function() {
+                        $(".style_div").toggle("slow");
+                    });
+                </script>
+                <p:fieldset legend="Filtro" id="group_filtro" styleClass="groupbox" style="text-shadow: 1px; width: auto; font-size: 14px; font-family: arial;">
+                    <script type="text/javascript">
+                        new $.Zebra_Tooltips($('.filtro_tooltip'), {
+                            'position': 'right'
+                        });
+                    </script>
+                    <p:panelGrid id="grid_filter" columns="4" styleClass="style_grid_filter" style="width: 600px;">
+                        <h:outputLabel for="filter_name" value="Conta" style="font-size: 11px; font-weight: bold;">
+                            <p:graphicImage styleClass="filtro_tooltip" title="Filtrar por conta." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                        </h:outputLabel>
+                        <p:selectOneMenu id="filter_name" value="#{ManageTabContasReceber.contaFiltro}" converter="tblConta"  effect="drop" style="margin-left: 12px; font-size: 12px; font-weight: bold; width: 322px;">
+                            <f:selectItem itemLabel="Todos" itemValue="0" />  
+                            <f:selectItems value="#{ManageTabContasReceber.contas}" var="conta" itemLabel="#{conta.nome}" itemValue="#{conta}"/>
+                            <p:ajax update="filter_name" />
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Recebido?" style="font-size: 11px; font-weight: bold; margin-left: 10px;">
+                            <p:graphicImage styleClass="filtro_tooltip" title="Filtrar contas já recebidas." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                        </h:outputLabel>
+                        <p:selectBooleanCheckbox id="checkboxRecebido" immediate="true" value="#{ManageTabContasReceber.recebido}" style="margin-top: -2px;" >
+                            <p:ajax update="checkboxRecebido" />
+                        </p:selectBooleanCheckbox>
+                    </p:panelGrid>
+                    <p:panelGrid id="grid_filter2" columns="4" styleClass="style_grid_filter" style="width: 340px; margin-bottom: 5px;">
+                        <h:outputLabel value="Período:" style="font-size: 11px; font-weight: bold;">
+                            <p:graphicImage styleClass="filtro_tooltip" title="Filtrar entre um período de tempo." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                        </h:outputLabel>
+                        <p:calendar id="firstDate" immediate="true" style="font-size: 12px;" value="#{ManageTabContasReceber.dateIniFiltro}">
+                            <p:ajax event="dateSelect" listener="#{ManageTabContasReceber.dateIniSelect}"/> 
+                        </p:calendar>
+                        <h:outputLabel value="até" style="font-size: 11px; font-weight: bold;"/>
+                        <p:calendar id="lastDate" immediate="true" style="font-size: 12px; " value="#{ManageTabContasReceber.dateEndFiltro}">
+                            <p:ajax event="dateSelect" listener="#{ManageTabContasReceber.dateEndSelect}"/> 
+                        </p:calendar>
+                    </p:panelGrid>
+                    <p:commandButton id="button_search" value="Executar Consulta" title="Executar a consulta com filtro!" styleClass="filtro_tooltip" 
+                                     style="margin-top: -35px; font-size: 12px; float: right; left: -10px;" 
+                                     onclick="executeFilter()"/>
+                    <p:remoteCommand name="executeFilter" immediate="true" update=":tabPrincipal:formContasReceber" process="@this"  actionListener="#{ManageTabContasReceber.findContasPagRecByFilter()}"/>
+                </p:fieldset>
+            </p:outputPanel>
+        </h:form>
+        <h:form id="formContasReceber" prependId="false" style="margin-top: 15px; height: auto">
+            <script type="text/javascript">
+                function removerContaRec() {
+                    $.Zebra_Dialog('Deseja <strong>realmente</strong> excluir a linha selcionada?', {
+                        'type':     'question',
+                        'title':    'Atenção',
+                        'buttons':  ['Sim!', 'Não!'],
+                        'onClose':  function(caption) {
+                            if(caption == 'Sim!'){
+                                deleteConta();
+                                updateMensagemValor();
+                                myschedule.update();
+                            }
+                        }
+                    });
+                }
+                function updateTblRec() {
+                    rcTblRec();
+                    updateMensagemValor();
+                }
+            </script>
+            <p:growl id="growl" sticky="false" life="5000" autoUpdate="false"/>
+            <p:fieldset id="fsContas" legend="A Receber" styleClass="groupbox" style="text-shadow: 1px; margin-top: 15px; width: auto; height: 350px; font-size: 14px; font-family: arial;">
+                <p:contextMenu for="contasReceber" style="background-color: #FFFFFF">  
+                    <p:menuitem style="font-size: 11px; font-weight: bold" onclick="updateRecebDialog()" action="#{ManageTabContasReceber.openDialogReceber()}" value="Receber Conta" icon="done"/>
+                    <p:menuitem style="font-size: 11px; font-weight: bold" onclick="updateEditDialog();" action="#{ManageTabContasReceber.openDialogEdit()}" value="Editar Conta"  icon="edit"/>
+                    <p:separator id="separator"/>  
+                    <p:menuitem styleClass="remover" style="font-size: 11px; font-weight: bold " onclick="removerContaRec();"        value="Remover Conta" icon="exit"/>
+                </p:contextMenu>
+                <p:remoteCommand name="deleteConta" update="contasReceber growl" process="@this" actionListener="#{ManageTabContasReceber.deleteConta()}"/>
+                <p:remoteCommand name="rcTblRec"       update=":tabPrincipal:conteudoContaRec" process="@this"/>
+                <p:dataTable id="contasReceber" paginatorPosition="bottom" var="contasReceber" paginatorAlwaysVisible="false"
+                             emptyMessage="Nenhuma linha encontrada."
+                             style="font-size: 11px !important; height: 150px;"
+                             value="#{ManageTabContasReceber.contasReceber}" rowKey="#{contasReceber.id}"
+                             selectionMode="single" paginator="true" rows="7">
+                    <p:ajax event="rowSelect" listener="#{ManageTabContasReceber.onRowSelect}" />
+                    <f:facet name="header">
+                        <p:outputPanel layout="block" style="float: left; font-size: 11px;">
+                            <p:commandButton id="add" value="Nova Conta" styleClass="style_com_pag" title="Adicionar conta a receber!" icon="add" onclick="schedule.show()"/>
+                        </p:outputPanel>
+                    </f:facet>
+                    <p:column headerText="id" width="1" rendered="false">
+                        #{contasReceber.id}
+                    </p:column>  
+
+                    <p:column headerText="Vencimento" style="text-align: center; width: 50px; max-width: 50px;">
+                        #{ManageTabContasReceber.dateFormat(contasReceber.dataMovimento)}
+                    </p:column>  
+
+                    <p:column headerText="Nº.Doc" style="text-align: center; width: 100px; max-width: 100px;">
+                        #{contasReceber.numeroDocumento}  
+                    </p:column>  
+
+                    <p:column headerText="Descrição" style="text-align: center; width: 200px; max-width: 200px;">
+                        #{contasReceber.descricao}
+                    </p:column>  
+
+                    <p:column headerText="Categoria" style="text-align: center; width: 100px; max-width: 100px;">
+                        #{contasReceber.idCategoria.nome}
+                    </p:column>
+
+                    <p:column headerText="Valor a Receber" style="text-align: center; width: 70px; max-width: 70px;">
+                        #{ManageTabContasReceber.moneyFormat(contasReceber.valor)}
+                    </p:column>
+
+                    <p:column headerText="Recebido" style="text-align: center; width: 40px; max-width: 40px;">
+                        <p:graphicImage rendered="#{contasReceber.pago.equals('N')}" url="/resources/img/thumb.png"/>
+                        <p:graphicImage rendered="#{!contasReceber.pago.equals('N')}" url="/resources/img/money.png"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:graphicImage url="./resources/img/icon_help.png" />
+                        <h:outputText value="Clique com o botão direito sobre a linha para abrir o painel de opções." />
+                    </f:facet>
+                </p:dataTable>
+            </p:fieldset>  
+        </h:form>
+    </p:outputPanel>
+    <!--
+    DIALOG PARA ABRIR O CALENDÁRIO
+    -->        
+    <p:dialog widgetVar="schedule" id="schedule" resizable="false" dynamic="true" onHide="updateTblRec();" >
+        <p:schedule id="scheduleContasPag" timeFormat="" value="#{ManageTabContasReceber.eventModel}" widgetVar="myschedule" style="font-size: 14px;">
+            <p:ajax event="dateSelect" listener="#{ManageTabContasReceber.onDateSelect}" update=":tabPrincipal:eventDialog" oncomplete="eventDialog.show()" />  
+            <p:ajax event="eventSelect" listener="#{ManageTabContasReceber.onEventSelect}" update=":tabPrincipal:eventDialog" oncomplete="eventDialog.show()" /> 
+        </p:schedule>
+    </p:dialog>
+    <!--
+    DIALOG PARA CADASTRO DE NOVA CONTA A RECEBER
+    -->    
+    <p:dialog id="eventDialog" style="width: 100px; font-size: 12px;" onHide="myschedule.update()" resizable="false" widgetVar="eventDialog" modal="true" closable="false">
+        <f:facet name="header">
+            <p:graphicImage url="/resources/img/money.png" />
+            <h:outputLabel value="Cadastrar nova conta a receber" style="margin-bottom: 40px !important; font-size: 12px"/>
+        </f:facet>
+        <h:form prependId="false">
+            <p:remoteCommand name="clearFields" process="@this" update="@this eventDetails" actionListener="#{ManageTabContasReceber.clearFields(1)}"/>
+            <p:remoteCommand name="updateDialog" update="eventDetails" process="@this"/>
+            <p:growl id="growlConta" sticky="false" life="5000" autoUpdate="false"/>
+            <p:fieldset id="fsNewConta" legend="Nova Conta" styleClass="groupbox" style="text-shadow: 1px; margin-bottom: 10px; height: auto; width: auto; font-size: 14px; font-family: arial;">
+                <h:panelGrid id="eventDetails" columns="4" cellspacing="12" styleClass="style_forms" style="left: 100px;">
+                    <h:outputLabel for="doc" value="Nº.Doc:" >
+                        <p:graphicImage styleClass="style_cad" title="Número do documento." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="doc" maxlength="18" size="20" value="#{ManageTabContasReceber.newContaPagRec.numeroDocumento}"/>
+                    <h:outputLabel for="date" value="Vencimento" style="margin-left: -181px"/>
+                    <p:inputText id="date" maxlength="10" size="10" readonly="true" style="margin-left: -181px; font-size: 11px;" value="#{ManageTabContasReceber.returnDateMovimento(ManageTabContasReceber.selectedDate)}"/>
+
+                    <h:outputLabel for="categ" value="Categoria" >
+                        <p:graphicImage styleClass="style_cad" title="Categoria da conta a receber." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="categ" maxlength="20" size="60" readonly="true" value="#{ManageTabContasReceber.newCategoria.nome}" style="font-size: 11px;"/>
+                    <p:commandButton id="btn_lov" styleClass="style_cad" title="Encontre uma categoria!" onclick="lov_categ.show();" icon="icon_love" style="width: 23px; height: 23px;">
+                        <f:setPropertyActionListener target="#{ManageTabContasReceber.action}" value="new" />
+                    </p:commandButton>
+                    <h:outputLabel value="" /> 
+
+                    <h:outputLabel for="valor" value="Valor *" style="font-weight: bold; color: #0072c6; ">
+                        <p:graphicImage styleClass="style_cad" title="Valor a ser recebido" style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="valor" styleClass="SaldoInicial" onfocus="formatMoney();" value="#{ManageTabContasReceber.newContaPagRec.valor}" size="19"  maxlength="50"
+                                 style="text-align: right; font-size: 11px; font-weight: bold; "
+                                 required="true" requiredMessage="Valor é obrigatório.">
+                        <f:convertNumber pattern="R$ #,##0.00" />
+                    </p:inputText>
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel for="descricao" value="Descrição *" style="font-weight: bold; color: #0072c6; ">
+                        <p:graphicImage styleClass="style_cad" title="Descrição sobre a conta a receber" style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputTextarea id="descricao" rows="3" cols="62" maxlength="99" value="#{ManageTabContasReceber.newContaPagRec.descricao}"/> 
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <p:commandButton id="save_new" value="Salvar" icon="save_button" style="font-size: 11px;" actionListener="#{ManageTabContasReceber.insertNewContaPagRec()}" 
+                                     process="@form" update="eventDetails lancamentos growlConta" />
+                    <p:commandButton value="Fechar" icon="exit" style="font-size: 11px;" onclick="eventDialog.hide(); clearFields()"/>
+                    <script type="text/javascript">
+                        new $.Zebra_Tooltips($('.style_cad'), {
+                            'position': 'right'
+                        });
+                    
+                        function formatMoney() {
+                            jQuery(function($){
+                                $(".SaldoInicial").priceFormat({
+                                    prefix: 'R$ ',
+                                    centsSeparator: ',',
+                                    thousandsSeparator: '.'
+                                });
+                            });
+                        }
+                    </script>
+                </h:panelGrid>
+                <p:outputPanel id="lancamentos" autoUpdate="true">
+                    <p:dataTable id="lancamentosTable" paginatorPosition="bottom" var="lancamento" paginatorAlwaysVisible="false"
+                                 emptyMessage="Nenhuma linha encontrada."
+                                 style="font-size: 11px; height: 150px;"
+                                 value="#{ManageTabContasReceber.newContasPagRec}"  paginator="true" rows="4">
+                        <p:column headerText="Vencimento" style="text-align: center; width: 80px">
+                            #{ManageTabContasReceber.dateFormat(lancamento.dataMovimento)}
+                        </p:column>  
+
+                        <p:column headerText="Nº.Doc" style="text-align: center; width: 100px; max-width: 100px">
+                            #{lancamento.numeroDocumento}  
+                        </p:column>  
+
+                        <p:column headerText="Descrição" style="text-align: center; width: 200px; max-width: 200px;">
+                            #{lancamento.descricao}
+                        </p:column>  
+
+                        <p:column headerText="Categoria" style="text-align: center; width: 150px; max-width: 150px">
+                            #{lancamento.idCategoria.nome}
+                        </p:column>
+
+                        <p:column headerText="A Receber" style="text-align: center; width: 100px; max-width: 100px">
+                            #{ManageTabContasReceber.moneyFormat(lancamento.valor)}
+                        </p:column>
+
+                        <p:column headerText="Excluir" style="text-align: center; width: 55px; max-width: 55px">
+                            <p:commandLink process="@this" actionListener="#{ManageTabContasReceber.deleteFromTbl(lancamento)}">
+                                <p:graphicImage value="/resources/img/delete.png" />
+                            </p:commandLink>
+                        </p:column>
+                        <f:facet name="footer">
+                            <h:outputLabel value=""/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:outputPanel>
+            </p:fieldset>
+        </h:form>
+    </p:dialog>
+    <!--
+    LOV PARA SELEÇÃO DA CATEGORIA
+    -->
+    <p:dialog id="lov_categ" style="width: 100px;" resizable="false" widgetVar="lov_categ">
+        <h:form>  
+            <p:fieldset id="fsLovCategRec" legend="Categorias" styleClass="groupbox" style="text-shadow: 1px; margin-bottom: 10px; height: auto; width: auto; font-size: 14px; font-family: arial;">
+                <p:dataTable id="dataTableRec" var="categ" value="#{ManageTabContasReceber.categorias}" widgetVar="categTableRec" rowKey="#{categ.id}"  
+                             emptyMessage="Nenhuma linha encontrada" paginator="true" rows="10" paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                             selectionMode="single">  
+                    <p:ajax event="rowSelect" listener="#{ManageTabContasReceber.onRowSelectCategRec}" update="@(:input)" oncomplete="lov_categ.hide();"/>
+                    <p:column id="idCateg" filterBy="#{categ.id}"
+                              headerText="id" rendered="false">
+                        <h:outputText value="#{categ.id}" />  
+                    </p:column>  
+
+                    <p:column id="grupoCateg" filterBy="#{categ.idGrupoCategoria.grupo}"
+                              headerText="Nome Grupo" 
+                              filterMatchMode="contains">  
+                        <h:outputText value="#{categ.idGrupoCategoria.grupo}" />  
+                    </p:column>  
+
+                    <p:column id="nomeCateg" filterBy="#{categ.nome}"
+                              headerText="Nome Categoria" 
+                              filterMatchMode="contains">  
+                        <h:outputText value="#{categ.nome}" />  
+                    </p:column>  
+                </p:dataTable>  
+            </p:fieldset>
+        </h:form>  
+    </p:dialog>
+    <!--
+        DIALOG PARA EDIÇÃO DA CONTA A RECEBER
+    -->
+    <p:dialog id="editDialog" style="width: 100px; font-size: 12px;" resizable="false" widgetVar="editDialog" modal="true" closable="false">
+        <f:facet name="header">
+            <p:graphicImage url="/resources/img/icon_edit.png" />
+            <h:outputLabel value="Editar a conta" style="margin-bottom: 40px !important; font-size: 12px"/>
+        </f:facet>
+        <h:form prependId="false">
+            <p:remoteCommand name="clearEditFields" process="@this" update="@this eventEditDetails" actionListener="#{ManageTabContasReceber.clearFields(1)}"/>
+            <p:remoteCommand name="updateEditDialog" update="eventEditDetails" process="@this"/>
+            <p:growl id="growlEditConta" sticky="false" life="5000" autoUpdate="false"/>
+            <p:fieldset id="fsEditConta" legend="Editar" styleClass="groupbox" style="text-shadow: 1px; margin-bottom: 10px; height: auto; width: auto; font-size: 14px; font-family: arial;">
+                <h:panelGrid id="eventEditDetails" columns="4" cellspacing="12" styleClass="style_forms" style="left: 100px;">
+                    <h:outputLabel for="editDoc" value="Nº.Doc:" >
+                        <p:graphicImage styleClass="style_cad" title="Número do documento." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="editDoc" maxlength="18" size="20" value="#{ManageTabContasReceber.selectedContaPagRec.numeroDocumento}"/>
+                    <h:outputLabel for="editDate" value="Vencimento" style="margin-left: -181px"/>
+                    <p:inputText id="editDate" maxlength="10" size="10" readonly="true" style="margin-left: -181px; font-size: 11px;" value="#{ManageTabContasReceber.returnDateMovimento(ManageTabContasReceber.selectedContaPagRec.dataMovimento)}"/>
+
+                    <h:outputLabel for="editCateg" value="Categoria" >
+                        <p:graphicImage styleClass="style_cad" title="Categoria da conta a receber." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="editCateg" maxlength="20" size="60" readonly="true" value="#{ManageTabContasReceber.selectedContaPagRec.idCategoria.nome}" style="font-size: 11px;"/>
+                    <p:commandButton id="editBtn_lov" styleClass="style_cad" title="Encontre uma categoria!" onclick="lov_categ.show();" icon="icon_love" style="width: 23px; height: 23px;">
+                        <f:setPropertyActionListener target="#{ManageTabContasReceber.action}" value="edit" />
+                    </p:commandButton>
+                    <h:outputLabel value="" /> 
+
+                    <h:outputLabel for="valor" value="Valor *" style="font-weight: bold; color: #0072c6; ">
+                        <p:graphicImage styleClass="style_cad" title="Valor a ser recebido" style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="editValor" styleClass="SaldoInicial" onfocus="formatMoney();" value="#{ManageTabContasReceber.selectedContaPagRec.valor}" size="19"  maxlength="50"
+                                 style="text-align: right; font-size: 11px; font-weight: bold; "
+                                 required="true" requiredMessage="Valor é obrigatório.">
+                        <f:convertNumber pattern="R$ #,##0.00" />
+                    </p:inputText>
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel for="editDescricao" value="Descrição *" style="font-weight: bold; color: #0072c6; ">
+                        <p:graphicImage styleClass="style_cad" title="Descrição sobre a conta a receber" style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputTextarea id="editDescricao" rows="3" cols="62" maxlength="100" value="#{ManageTabContasReceber.selectedContaPagRec.descricao}"/> 
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <p:commandButton id="editSave_new" value="Salvar" icon="save_button" style="font-size: 11px;" actionListener="#{ManageTabContasReceber.UpdateContaPagRec()}" 
+                                     process="@form" update="eventEditDetails growlEditConta" />
+                    <p:commandButton value="Fechar" icon="exit" style="font-size: 11px;" onclick="updateTblRec(); editDialog.hide(); clearEditFields(); "/>
+                    <script type="text/javascript">
+                        new $.Zebra_Tooltips($('.style_cad'), {
+                            'position': 'right'
+                        });
+                    
+                        function formatMoney() {
+                            jQuery(function($){
+                                $(".SaldoInicial").priceFormat({
+                                    prefix: 'R$ ',
+                                    centsSeparator: ',',
+                                    thousandsSeparator: '.'
+                                });
+                            });
+                        }
+                    </script>
+                </h:panelGrid>
+            </p:fieldset>
+        </h:form>
+    </p:dialog>
+    <!--
+    DIALOG PARA RECEBIMENTO DA CONTA A RECEBER
+    -->
+    <p:dialog id="recebDialog" style="width: 100px; font-size: 12px;" resizable="false" widgetVar="recebDialog" modal="true" closable="false" >
+        <f:facet name="header">
+            <p:graphicImage url="/resources/img/accept1.png" />
+            <h:outputLabel value="Receber Conta" style="margin-bottom: 40px !important; font-size: 12px"/>
+        </f:facet>
+        <h:form prependId="false">
+            <p:remoteCommand name="updateRecebDialog" update="eventRecebDetails" process="@this"/>
+            <p:growl id="growlRecebConta" sticky="false" life="5000" autoUpdate="false"/>
+            <p:fieldset id="fsRecebConta" legend="Receber" styleClass="groupbox" style="text-shadow: 1px; margin-bottom: 10px; height: auto; width: auto; font-size: 14px; font-family: arial;">
+                <h:panelGrid id="eventRecebDetails" columns="4" cellspacing="12" styleClass="style_forms" style="left: 100px;">
+                    <h:outputLabel for="recebDoc" value="Nº.Doc:" >
+                        <p:graphicImage styleClass="style_cad" title="Número do documento." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="recebDoc" maxlength="18" size="20" value="#{ManageTabContasReceber.selectedContaPagRec.numeroDocumento}"/>
+                    <h:outputLabel for="editDate" value="Data Pgto" style="margin-left: -171px"/>
+                    <p:inputText id="recebDate" maxlength="10" size="10" readonly="true" style="margin-left: -151px; font-size: 11px;" value="#{ManageTabContasReceber.returnDateMovimento(ManageTabContasReceber.selectedContaPagRec.dataPagamento)}"/>
+
+                    <h:outputLabel for="recebFilter_name" value="Conta" style="font-size: 11px; font-weight: bold;">
+                        <p:graphicImage styleClass="style_cad" title="Conta na qual irá receber." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:selectOneMenu id="recebFilter_name" value="#{ManageTabContasReceber.newConta}" converter="tblConta"  effect="drop" style="font-size: 11px; font-weight: bold; width: 322px;">
+                        <f:selectItems value="#{ManageTabContasReceber.contas}" var="recebConta" itemLabel="#{recebConta.nome}" itemValue="#{recebConta}"/>
+                    </p:selectOneMenu>
+                    <h:outputLabel value="" /> 
+                    <h:outputLabel value="" /> 
+
+                    <h:outputLabel for="recebValor" value="Valor *" style="font-weight: bold; color: #0072c6; ">
+                        <p:graphicImage styleClass="style_cad" title="Valor a ser recebido" style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputText id="recebValor" styleClass="SaldoInicial" onfocus="formatMoney();" value="#{ManageTabContasReceber.selectedContaPagRec.valor}" size="19"  maxlength="50"
+                                 style="text-align: right; font-size: 11px; font-weight: bold; "
+                                 required="true" requiredMessage="Valor é obrigatório.">
+                        <f:convertNumber pattern="R$ #,##0.00" />
+                    </p:inputText>
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel for="recebDescricao" value="Descrição *" style="font-weight: bold; color: #0072c6; ">
+                        <p:graphicImage styleClass="style_cad" title="Descrição sobre a conta a receber" style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputTextarea id="recebDescricao" rows="3" cols="62" maxlength="100" value="#{ManageTabContasReceber.selectedContaPagRec.descricao}"/> 
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <p:commandButton id="recebSave_new" value="Salvar" icon="save_button" style="font-size: 11px;" actionListener="#{ManageTabContasReceber.RecebContaRec()}" 
+                                     process="@form" update="eventRecebDetails growlRecebConta" />
+                    <p:commandButton value="Fechar" icon="exit" style="font-size: 11px;" onclick="recebDialog.hide(); updateTblRec();"/>
+                    <script type="text/javascript">
+                        new $.Zebra_Tooltips($('.style_cad'), {
+                            'position': 'right'
+                        });
+                    
+                        function formatMoney() {
+                            jQuery(function($){
+                                $(".SaldoInicial").priceFormat({
+                                    prefix: 'R$ ',
+                                    centsSeparator: ',',
+                                    thousandsSeparator: '.'
+                                });
+                            });
+                        }
+                    </script>
+                </h:panelGrid>
+            </p:fieldset>
+        </h:form>
+    </p:dialog>
+    <!--
+    LIGHTBOX DE ERRO
+    -->
+    <p:dialog id="lbError" widgetVar="dlg_lbErrorRec" styleClass="msgbox" header="Atenção!" 
+              style="width: 300px !important; height: 120px !important; font-size: 12px; font-family: Tahoma, Verdana, Arial" 
+              resizable="false" modal="true">
+        <h:form prependId="false">
+            <p:outputPanel id="error" layout="block">
+                <h:panelGrid columns="2" styleClass="style_forms" style="border: none !important">
+                    <p:graphicImage url="/resources/img/error.png" />
+                    <h:outputLabel value="Essa conta já foi recebida." style="font-family: Arial; font-size: 15px; font-weight: bold; text-shadow: 1px; margin-left: 7px;"/>
+                </h:panelGrid>
+                <p:commandButton  value="OK" onclick="dlg_lbErrorRec.hide()" style="margin-left: 110px; margin-top: 10px;"/>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    <script type="text/javascript">
+        new $.Zebra_Tooltips($('.style_com_pag'), {
+            'position': 'right'
+        });
+    </script>
+</ui:fragment>

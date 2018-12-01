@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head>      
+        <title>SISCONFIP</title>    
+    </h:head>   
+    <h:body>
+        <ui:composition template="./resources/template/indexTemplate.xhtml">
+            <ui:define name="centro"> 
+                <p:outputPanel layout="block" style="font-size: 12px; 
+                               height: 332px; 
+                               width: 545px; 
+                               background: url('./resources/img/ajuda.png') !important;
+                               margin-left: 30%;  
+                               margin-top: 1%;">
+
+                    <h:panelGrid id="formulario" style="height: 100px;
+                                 width: auto; 
+                                 border: none !important; 
+                                 left: 6%;
+                                 top: 14%;
+                                 position: relative;">
+
+                        &nbsp; <p>Na central de ajuda do <b>SISCONFIP</b> você aprende a utilizar todos os recursos <br/> disponíveis.</p>
+                        <br/>
+                        <p:row>
+                                
+                            <p:column>
+                                <p:lightBox>
+                                    <img src="resources/img/idea2.png"/>
+                                    <h:outputLink value="#">
+                                        <h:outputText value="Como cadastrar e remover uma Conta Banária/Cartão de Crédito?"/>
+                                    </h:outputLink>
+
+                                    <f:facet name="inline">
+                                        <video controls="controls">
+                                            <source src="resources/videos/conta.mp4" type="video/mp4" autoplay="true"/>
+                                        </video>
+                                    </f:facet>
+                                </p:lightBox>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:lightBox>
+                                    <img src="resources/img/idea2.png"/>
+                                    <h:outputLink value="#">
+                                        <h:outputText value="Como realizar um lançamento de Contas a Pagar?"/>
+                                    </h:outputLink>
+
+                                    <f:facet name="inline">
+                                        <video controls="controls">
+                                            <source src="resources/videos/contas_pagar.mp4" type="video/mp4" autoplay="true"/>
+                                        </video>
+                                    </f:facet>
+                                </p:lightBox>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:lightBox>
+                                    <img src="resources/img/idea2.png"/>
+                                    <h:outputLink value="#">
+                                        <h:outputText value="Como realizar um lançamento de Contas a Receber?"/>
+                                    </h:outputLink>
+
+                                    <f:facet name="inline">
+                                        <video controls="controls">
+                                            <source src="resources/videos/contas_receber.mp4" type="video/mp4" autoplay="true"/>
+                                        </video>
+                                    </f:facet>
+                                </p:lightBox>
+                            </p:column>
+                        </p:row>
+
+
+                        <p:row>
+                            <p:column>
+                                <p:lightBox>
+                                    <img src="resources/img/idea2.png"/>
+                                    <h:outputLink value="#">
+                                        <h:outputText value="Como realizar um lançamento de Movimento?"/>
+                                    </h:outputLink>
+
+                                    <f:facet name="inline">
+                                        <video controls="controls">
+                                            <source src="resources/videos/movimentos.mp4" type="video/mp4" autoplay="true"/>
+                                        </video>
+                                    </f:facet>
+                                </p:lightBox>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:lightBox>
+                                    <img src="resources/img/idea2.png"/>
+                                    <h:outputLink value="#">
+                                        <h:outputText value="Como visualizar o relatório de Contas a Receber?"/>
+                                    </h:outputLink>
+
+                                    <f:facet name="inline">
+                                        <video controls="controls">
+                                            <source src="resources/videos/rel_contas_receber.mp4" type="video/mp4" autoplay="true"/>
+                                        </video>
+                                    </f:facet>
+                                </p:lightBox>
+                            </p:column>
+                        </p:row>
+                        <br />
+                        <p>Caso ainda exista dúvida entre em contato.</p>
+
+                    </h:panelGrid>
+
+                </p:outputPanel>
+            </ui:define>
+        </ui:composition>
+    </h:body>  
+</html>
+

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head>      
+        <title>Bem Vindo ao SISCONFIP</title>
+        <script src="http://code.jquery.com/jquery-latest.js"></script>		
+    </h:head>   
+    <h:body>
+        <ui:composition template="./resources/template/indexTemplate.xhtml">
+            <ui:define name="centro"> 
+                <p:outputPanel layout="block" id="formulario" style="font-size: 12px; 
+                               height: 280px; 
+                               width: 400px; 
+                               background: url('./resources/img/Login.png') !important;
+                               margin-left: 500px;  
+                               margin-top: 1%;">  
+                    <h:form id="formFormulario">
+                        <p:focus for="usuario"/>
+                        <p:growl id="growl" />  
+                        <h:panelGrid columns="2" cellpadding="5" style="height: 100px; 
+                                     width: 100px; 
+                                     border: none !important; 
+                                     margin-left: 6%; 
+                                     top: 60px; 
+                                     position: relative;"> 
+                            <p:graphicImage alt="Usuário" style="padding-left: 25px;" url="./resources/img/iconUser.png"/>
+                            <p:inputText id="usuario"
+                                         size="35"
+                                         maxlength="18"
+                                         value="#{ManageUsuario.tblUsuario.username}"   
+                                         required="true" requiredMessage="Username obrigatório!"
+                                         style="font-size: 12px; font-weight: normal;">  
+                                <f:validateLength minimum="2" />  
+                                <pe:tooltip for="usuario" value="Digite seu username!" showEffect="fadeIn"  
+                                            hideEffect="fadeIn" showDelay="0" position="left center" targetPosition="right center"/>  
+                            </p:inputText>
+                            <p:graphicImage alt="Usuário" style="margin-left:25px;" url="./resources/img/iconPassword.png"/>
+                            <p:password id="senha"  
+                                        size="35"
+                                        value="#{ManageUsuario.tblUsuario.password}"   
+                                        required="true" requiredMessage="Senha obrigatória!"
+                                        style="font-size: 12px; font-weight: normal;">
+                                <f:validateLength minimum="2" />  
+                                <pe:tooltip for="senha" value="Digite sua senha!" showEffect="fadeIn"  
+                                            hideEffect="fadeIn" showDelay="0" position="left center" targetPosition="right center"/>  
+                            </p:password>
+                            <p:spacer />
+                            <p:commandButton style="border: none !important; 
+                                             margin-top: 10px;
+                                             margin-left:60px;
+                                             height: 39px;
+                                             width: 60px;
+                                             color: #000000;
+                                             font-weight: bold;
+                                             font-size: 10px;"  id="entrar" value="Login" update="formFormulario growl"
+                                             actionListener="#{ManageUsuario.login()}" 
+                                             oncomplete="handleLoginRequest(xhr, status, args)"/>
+                            <script type="text/javascript">  
+                                function handleLoginRequest(xhr, status, args) {  
+                                    if(args.validationFailed || !args.loggedIn) {  
+                                        jQuery('#formulario').effect("pulsate", { times:3 }, 500);
+                                    } else {
+                                        jQuery('#formulario').effect("bounce", { times:3 }, 500);
+                                        jQuery('#formulario').fadeOut(500,function(){
+                                            $("body").css("cursor", "wait");
+                                            $('#ControlTransition').css({
+                                                display: 'block'
+                                            });
+                                            window.location = "Principal.xhtml";
+                                        });
+                                    }  
+                                }  
+                            </script> 
+                        </h:panelGrid>
+                    </h:form>
+                    <h:form>
+                        <h:panelGrid columns="1" cellspacing="10" style="margin-top: 80px">
+                            <p:commandLink id="esqSenha" process="@this" ajax="false" value="Esqueci minha senha" 
+                                           style="font-family: Verdana, sans-serif;
+                                           font-size: 10px; 
+                                           font-weight: normal; 
+                                           position: relative;
+                                           color: #FFFFFF" 
+                                           action="#{ManageUsuario.retornaPagina('TrocaSenha')}"/>
+                            <p:commandLink id="novoUsuario" process="@this" ajax="false" value="Novo usuário" 
+                                           style="font-family: Verdana, sans-serif;
+                                           font-size: 10px; 
+                                           font-weight: normal; 
+                                           position: relative;
+                                           color: #FFFFFF" 
+                                           action="#{ManageUsuario.retornaPagina('Cadastro')}"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:outputPanel>
+            </ui:define>
+        </ui:composition>
+    </h:body>  
+</html>

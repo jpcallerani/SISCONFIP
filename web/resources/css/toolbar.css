@@ -1,0 +1,11 @@
+#sfw_toolbar{	
+	display:block;
+	float:left;
+	height:32px;
+	background-image: url(../img/toolbar_background.png);
+	border:1px solid #C8C8C8;
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	padding:0;
+	margin-right:5px; /*provisório, até criarmos o divisor*/	
+}

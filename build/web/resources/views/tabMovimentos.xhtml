@@ -1,0 +1,329 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:pe="http://primefaces.org/ui/extensions"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:f="http://java.sun.com/jsf/core" 
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <link href="./resources/css/tabMovimentos.css"   rel="stylesheet" type="text/css" />
+
+    <p:outputPanel layout="block" id="conteudoMov">
+        <h:form prependId="false" style="margin-top: 15px;">
+            <p:commandButton id="button_filter_mov" styleClass="btn_filter" style="top: -9px;" icon="icon_love" value="Filtro" onclick="updateContaMov()"/>
+            <p:remoteCommand name="updateContaMov" update="group_filtro_mov" process="@this"  actionListener="#{ManageTabMovimentos.findContas()}"/>
+            <p:graphicImage styleClass="help_receber_mov" title="Clique para realizar uma busca avançada." style="margin-left: 5px; margin-bottom: 5px" url="/resources/img/tooltip/tooltip_icon.gif" />
+            <p:outputPanel id="div_filter_mov" styleClass="style_div_mov" layout="block">
+                <script type="text/javascript">
+
+                    $(".style_div_mov").hide();
+        
+                    new $.Zebra_Tooltips($('.help_receber_mov'), {
+                        'position': 'right'
+                    });
+                        
+                    $(".btn_filter").click(function() {
+                        $(".style_div_mov").toggle("slow");
+                    });
+                </script>
+                <p:fieldset legend="Filtro" id="group_filtro_mov" styleClass="groupbox" style="text-shadow: 1px; width: auto; font-size: 14px; font-family: arial;">
+                    <script type="text/javascript">
+                        new $.Zebra_Tooltips($('.filtro_tooltip_mov'), {
+                            'position': 'right'
+                        });
+                    </script>
+                    <p:panelGrid id="grid_filter_mov" columns="4" styleClass="style_grid_filter_mov" style="width: 600px;">
+                        <h:outputLabel for="filter_name_mov" value="Conta" style="font-size: 11px; font-weight: bold;">
+                            <p:graphicImage styleClass="filtro_tooltip_mov" title="Filtrar por conta." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                        </h:outputLabel>
+                        <p:selectOneMenu id="filter_name_mov" value="#{ManageTabMovimentos.contaFiltro}" converter="tblConta"  effect="drop" style="margin-left: -23px; font-size: 12px; font-weight: bold; width: 322px;">
+                            <f:selectItem itemLabel="Todos" itemValue="0" />  
+                            <f:selectItems value="#{ManageTabMovimentos.contas}" var="conta" itemLabel="#{conta.nome}" itemValue="#{conta}"/>
+                            <p:ajax update="filter_name_mov" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:panelGrid id="grid_filter_mov2" columns="4" styleClass="style_grid_filter_mov" style="width: 340px; margin-bottom: 5px;">
+                        <h:outputLabel value="Período:" style="font-size: 11px; font-weight: bold;">
+                            <p:graphicImage styleClass="filtro_tooltip_mov" title="Filtrar entre um período de tempo." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                        </h:outputLabel>
+                        <p:calendar id="firstDateMov" immediate="true" style="font-size: 12px;" value="#{ManageTabMovimentos.dateIniFiltro}">
+                            <p:ajax event="dateSelect" listener="#{ManageTabMovimentos.dateIniSelect}"/> 
+                        </p:calendar>
+                        <h:outputLabel value="até" style="font-size: 11px; font-weight: bold;"/>
+                        <p:calendar id="lastDateMov" immediate="true" style="font-size: 12px; " value="#{ManageTabMovimentos.dateEndFiltro}">
+                            <p:ajax event="dateSelect" listener="#{ManageTabMovimentos.dateEndSelect}"/> 
+                        </p:calendar>
+                    </p:panelGrid>
+                    <p:commandButton id="button_search_mov" value="Executar Consulta" title="Executar a consulta com filtro!" styleClass="filtro_tooltip_mov" 
+                                     style="margin-top: -35px; font-size: 12px; float: right; left: -10px;" 
+                                     onclick="executeFilter()"/>
+                    <p:remoteCommand name="executeFilter" immediate="true" update=":tabPrincipal:formContasReceberMov" process="@this"  actionListener="#{ManageTabMovimentos.findContasPagRecByFilter()}"/>
+                </p:fieldset>
+            </p:outputPanel>
+        </h:form>
+        <h:form id="formContasReceberMov" prependId="false" style="margin-top: 15px; height: auto">
+            <script type="text/javascript">
+                function removerMovimento() {
+                    $.Zebra_Dialog('Deseja <strong>realmente</strong> excluir a linha selcionada?', {
+                        'type':     'question',
+                        'title':    'Atenção',
+                        'buttons':  ['Sim!', 'Não!'],
+                        'onClose':  function(caption) {
+                            if(caption == 'Sim!'){
+                                deleteConta();
+                                myschedule_mov.update();
+                            }
+                        }
+                    });
+                }
+                function updateTbl() {
+                    rcTblMovimento();
+                }
+            </script>
+            <p:growl id="growlMov" sticky="false" life="5000" autoUpdate="false"/>
+            <p:fieldset id="fsMovimentos" legend="Movimentos" styleClass="groupbox" style="text-shadow: 1px; margin-top: 15px; width: auto; height: 350px; font-size: 14px; font-family: arial;">
+                <p:contextMenu for="Movimentos" style="background-color: #FFFFFF">  
+                    <p:menuitem styleClass="remover" style="font-size: 11px; font-weight: bold " onclick="removerMovimento();"        value="Remover Conta" icon="exit"/>
+                </p:contextMenu>
+                <p:remoteCommand name="deleteConta" update="Movimentos growlMov" process="@this" actionListener="#{ManageTabMovimentos.deleteMovimento()}"/>
+                <p:remoteCommand name="rcTblMovimento"       update=":tabPrincipal:conteudoMov" process="@this"/>
+                <p:dataTable id="Movimentos" paginatorPosition="bottom" var="movimento" paginatorAlwaysVisible="false"
+                             emptyMessage="Nenhuma linha encontrada."
+                             style="font-size: 11px !important; height: 150px;"
+                             value="#{ManageTabMovimentos.movimentos}" rowKey="#{movimento.id}"
+                             selectionMode="single" paginator="true" rows="7">
+                    <p:ajax event="rowSelect" listener="#{ManageTabMovimentos.onRowSelect}" />
+                    <f:facet name="header">
+                        <p:outputPanel layout="block" style="float: left; font-size: 11px;">
+                            <p:commandButton id="add" value="Novo Movimento" styleClass="style_com" title="Adicionar novo movimento!" icon="add" onclick="schedule_mov.show()"/>
+                        </p:outputPanel>
+                    </f:facet>
+                    <p:column headerText="id" width="1" rendered="false">
+                        #{movimento.id}
+                    </p:column>  
+
+                    <p:column headerText="Vencimento" style="text-align: center; width: 50px; max-width: 50px;">
+                        #{ManageTabMovimentos.dateFormat(movimento.dataMovimento)}
+                    </p:column>  
+
+                    <p:column headerText="Nº.Doc" style="text-align: center; width: 100px; max-width: 100px;">
+                        #{movimento.numeroDocumento}  
+                    </p:column>  
+
+                    <p:column headerText="Descrição" style="text-align: center; width: 180px; max-width: 180px;">
+                        #{movimento.descricao}
+                    </p:column>  
+
+                    <p:column headerText="Categoria" style="text-align: center; width: 100px; max-width: 100px;">
+                        #{movimento.categoria.nome}
+                    </p:column>
+
+                    <p:column headerText="Valor" style="text-align: center; width: 70px; max-width: 70px;">
+                        #{ManageTabMovimentos.moneyFormat(movimento.valor)}
+                    </p:column>
+
+                    <p:column headerText="Tipo Movimento" style="text-align: center; width: 60px; max-width: 60px;">
+                        <p:graphicImage rendered="#{movimento.idTipoMovimento.id == 1}" url="/resources/img/money_minus.png"/>
+                        <p:graphicImage rendered="#{movimento.idTipoMovimento.id != 1}" url="/resources/img/money.png"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:graphicImage url="./resources/img/icon_help.png" />
+                        <h:outputText value="Clique com o botão direito sobre a linha para abrir o painel de opções." />
+                    </f:facet>
+                </p:dataTable>
+                <script type="text/javascript">
+                    new $.Zebra_Tooltips($('.style_com'), {
+                        'position': 'right'
+                    });
+                </script>
+            </p:fieldset>  
+        </h:form>
+    </p:outputPanel>
+    <!--
+    DIALOG PARA ABRIR O CALENDÁRIO
+    -->        
+    <p:dialog widgetVar="schedule_mov" id="schedule_mov" resizable="false" dynamic="true" onHide="updateTbl();" >
+        <p:schedule id="scheduleMovimentos" timeFormat="" value="#{ManageTabMovimentos.eventModel}" widgetVar="myschedule_mov" style="font-size: 14px;">
+            <p:ajax event="dateSelect" listener="#{ManageTabMovimentos.onDateSelect}" update=":tabPrincipal:eventDialogMov" oncomplete="eventDialogMov.show()" />  
+            <p:ajax event="eventSelect" listener="#{ManageTabMovimentos.onEventSelect}" update=":tabPrincipal:eventDialogMov" oncomplete="eventDialogMov.show()" /> 
+        </p:schedule>
+    </p:dialog>
+    <!--
+    DIALOG PARA CADASTRO DE NOVO MOVIMENTO
+    -->    
+    <p:dialog id="eventDialogMov" style="width: 100px; font-size: 12px;" onHide="myschedule_mov.update()" resizable="false" widgetVar="eventDialogMov" modal="true" closable="false">
+        <f:facet name="header">
+            <p:graphicImage url="/resources/img/movimentos.png" />
+            <h:outputLabel value="Cadastrar novo movimento" style="margin-bottom: 40px !important; font-size: 12px"/>
+        </f:facet>
+        <h:form prependId="false">
+            <p:remoteCommand name="clearFields" process="@this" update="@this eventDetailsMov" actionListener="#{ManageTabMovimentos.clearFields(1)}"/>
+            <p:remoteCommand name="updateDialogMov" update="eventDetailsMov" process="@this"/>
+            <p:growl id="growlContaMov" sticky="false" life="5000" autoUpdate="false"/>
+            <p:fieldset id="fsNewMovimento" legend="Novo Movimento" styleClass="groupbox" style="text-shadow: 1px; margin-bottom: 10px; height: auto; width: auto; font-size: 14px; font-family: arial;">
+                <h:panelGrid id="eventDetailsMov" columns="4" cellspacing="12" styleClass="style_forms" style="left: 100px;">
+                    
+                    <h:outputLabel for="docMov" value="Nº.Doc: *" >
+                        <p:graphicImage styleClass="style_cad" title="Número do documento." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    
+                   
+                    <p:inputText id="docMov" maxlength="18" size="20" value="#{ManageTabMovimentos.newMovimento.numeroDocumento}"/>
+                    
+                    <h:outputLabel for="dateMov" value="Vencimento" style="margin-left: -181px" />
+                    <p:inputText id="dateMov" maxlength="10" size="10" readonly="true" style="margin-left: -181px; font-size: 11px;" value="#{ManageTabMovimentos.returnDateMovimento(ManageTabMovimentos.selectedDate)}"/>
+
+                    <h:outputLabel for="categMov" value="Categoria" >
+                        <p:graphicImage styleClass="style_cad" title="Categoria da conta a receber." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    
+                  
+                    <p:inputText id="categMov" maxlength="20" size="60" readonly="true" value="#{ManageTabMovimentos.newCategoria.nome}" style="font-size: 11px;"/>
+                    <p:commandButton  id="btn_lov_mov" styleClass="style_cad" title="Encontre uma categoria!" onclick="lov_categ_mov.show();" icon="icon_love" style="width: 23px; height: 23px;">
+                        <f:setPropertyActionListener target="#{ManageTabMovimentos.action}" value="new" />
+                    </p:commandButton>
+                    
+                    <h:outputLabel value="" /> 
+                    
+                    <h:outputLabel value="Tipo de Movimento" /> 
+                    <p:selectOneRadio  required="true" requiredMessage="Selecione o tipo do movimento (crédito ou débito)" id="options" value="#{ManageTabMovimentos.tipoMovimento}">  
+                        <f:selectItem itemLabel="Débito" itemValue="1" />  
+                        <f:selectItem itemLabel="Crédito" itemValue="2" />
+                    </p:selectOneRadio>  
+                    
+                    <h:outputLabel value="" /> 
+                    <h:outputLabel value="" /> 
+
+                    <h:outputLabel for="recebFilter_nameMov" value="Conta" style="font-size: 11px; font-weight: bold;">
+                        <p:graphicImage styleClass="style_cad" title="Conta ue será creditado." style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    
+                   
+                    <p:selectOneMenu  required="true" requiredMessage="Por favor selecione a Conta" id="recebFilter_nameMov" value="#{ManageTabMovimentos.newConta}" converter="tblConta"  effect="drop" style="font-size: 11px; font-weight: bold; width: 322px;">
+                        <f:selectItems value="#{ManageTabMovimentos.contas}" var="recebConta" itemLabel="#{recebConta.nome}" itemValue="#{recebConta}"/>
+                    </p:selectOneMenu>
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+
+                    <h:outputLabel for="valor_mov" value="Valor *" style="font-weight: bold; color: #0072c6; ">
+                        <p:graphicImage styleClass="style_cad" title="Valor do movimento" style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>                    
+                    <p:inputText id="valor_mov" styleClass="SaldoInicial" onfocus="formatMoney();" value="#{ManageTabMovimentos.newMovimento.valor}" size="19"  maxlength="50"
+                                 style="text-align: right; font-size: 11px; font-weight: bold; "
+                                 required="true" requiredMessage="Valor é obrigatório.">
+                        <f:convertNumber pattern="R$ #,##0.00" />
+                    </p:inputText>
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                        
+                    <h:outputLabel for="descricao_mov" value="Descrição *" style="font-weight: bold; color: #0072c6; ">
+                        <p:graphicImage styleClass="style_cad" title="Descrição sobre o movimento" style="margin-left: 5px;" url="/resources/img/tooltip/tooltip_icon.gif" />
+                    </h:outputLabel>
+                    <p:inputTextarea id="descricao_mov" rows="3" cols="62" maxlength="99" value="#{ManageTabMovimentos.newMovimento.descricao}"/> 
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+
+                    <p:commandButton id="save_new_mov" value="Salvar" icon="save_button" style="font-size: 11px;" actionListener="#{ManageTabMovimentos.insertNewMovimento()}" 
+                                     process="@form" update="eventDetailsMov lancamentos_mov growlContaMov" />
+                    <p:commandButton value="Fechar" icon="exit" style="font-size: 11px;" onclick="eventDialogMov.hide(); clearFields()"/>
+                    <script type="text/javascript">
+                        new $.Zebra_Tooltips($('.style_cad'), {
+                            'position': 'right'
+                        });
+                    
+                        function formatMoney() {
+                            jQuery(function($){
+                                $(".SaldoInicial").priceFormat({
+                                    prefix: 'R$ ',
+                                    centsSeparator: ',',
+                                    thousandsSeparator: '.'
+                                });
+                            });
+                        }
+                    </script>
+                </h:panelGrid>
+                <p:outputPanel id="lancamentos_mov" autoUpdate="true">
+                    <p:dataTable id="lancamentosTableMov" paginatorPosition="bottom" var="lancamento" paginatorAlwaysVisible="false"
+                                 emptyMessage="Nenhuma linha encontrada."
+                                 style="font-size: 11px; height: 150px;"
+                                 value="#{ManageTabMovimentos.newMovimentos}"  paginator="true" rows="4">
+                        <p:column headerText="Vencimento" style="text-align: center; width: 80px">
+                            #{ManageTabMovimentos.dateFormat(lancamento.dataMovimento)}
+                        </p:column>  
+
+                        <p:column headerText="Nº.Doc" style="text-align: center; width: 100px; max-width: 100px">
+                            #{lancamento.numeroDocumento}  
+                        </p:column>  
+
+                        <p:column headerText="Descrição" style="text-align: center; width: 200px; max-width: 200px;">
+                            #{lancamento.descricao}
+                        </p:column>  
+
+                        <p:column headerText="Categoria" style="text-align: center; width: 150px; max-width: 150px">
+                            #{lancamento.categoria.nome}
+                        </p:column>
+
+                        <p:column headerText="A Receber" style="text-align: center; width: 100px; max-width: 100px">
+                            #{ManageTabMovimentos.moneyFormat(lancamento.valor)}
+                        </p:column>
+
+                        <p:column headerText="Excluir" style="text-align: center; width: 55px; max-width: 55px">
+                            <p:commandLink process="@this" actionListener="#{ManageTabMovimentos.deleteFromTbl(lancamento)}">
+                                <p:graphicImage value="/resources/img/delete.png" />
+                            </p:commandLink>
+                        </p:column>
+                        <f:facet name="footer">
+                            <h:outputLabel value=""/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:outputPanel>
+            </p:fieldset>
+        </h:form>
+    </p:dialog>
+    <!--
+    LOV PARA SELEÇÃO DA CATEGORIA
+    -->
+    <p:dialog id="lov_categ_mov" style="width: 100px;" resizable="false" widgetVar="lov_categ_mov">
+        <h:form>  
+            <p:fieldset id="fsLovCategMov" legend="Categorias" styleClass="groupbox" style="text-shadow: 1px; margin-bottom: 10px; height: auto; width: auto; font-size: 14px; font-family: arial;">
+                <p:dataTable id="dataTableMov" var="categ" value="#{ManageTabMovimentos.categorias}" widgetVar="categTableMov" rowKey="#{categ.id}"  
+                             emptyMessage="Nenhuma linha encontrada" paginator="true" rows="10" paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                             selectionMode="single">  
+                    <p:ajax event="rowSelect" listener="#{ManageTabMovimentos.onRowSelectCateg}" update="@(:input)" oncomplete="lov_categ_mov.hide();"/>
+                    <p:column id="idCateg" filterBy="#{categ.id}"
+                              headerText="id" rendered="false">
+                        <h:outputText value="#{categ.id}" />  
+                    </p:column>  
+
+                    <p:column id="grupoCateg" filterBy="#{categ.idGrupoCategoria.grupo}"
+                              headerText="Nome Grupo" 
+                              filterMatchMode="contains">  
+                        <h:outputText value="#{categ.idGrupoCategoria.grupo}" />  
+                    </p:column>  
+
+                    <p:column id="nomeCateg" filterBy="#{categ.nome}"
+                              headerText="Nome Categoria" 
+                              filterMatchMode="contains">  
+                        <h:outputText value="#{categ.nome}" />  
+                    </p:column>  
+                </p:dataTable>  
+            </p:fieldset>
+        </h:form>  
+    </p:dialog>
+    <!--
+    LIGHTBOX DE ERRO
+    -->
+    <p:dialog id="lbErrorMov" widgetVar="dlg_lbErrorMov" styleClass="msgbox" header="Atenção!" 
+              style="width: 300px !important; height: 120px !important; font-size: 12px; font-family: Tahoma, Verdana, Arial" 
+              resizable="false" modal="true">
+        <h:form prependId="false">
+            <p:outputPanel id="errorMov" layout="block">
+                <h:panelGrid columns="2" styleClass="style_forms" style="border: none !important">
+                    <p:graphicImage url="/resources/img/error.png" />
+                    <h:outputLabel value="Essa conta já foi recebida." style="font-family: Arial; font-size: 15px; font-weight: bold; text-shadow: 1px; margin-left: 7px;"/>
+                </h:panelGrid>
+                <p:commandButton  value="OK" onclick="dlg_lbErrorMov.hide()" style="margin-left: 110px; margin-top: 10px;"/>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+</ui:fragment>

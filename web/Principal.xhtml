@@ -1,0 +1,267 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+        <script type="text/javascript" src="./resources/js/calendar.js"></script>
+        <script type="text/javascript" src="./resources/js/jquery.priceFormat.js"></script>
+        <script type="text/javascript" src="./resources/js/zebra_dialog.js"></script>
+        <script type="text/javascript" src="./resources/js/zebra_tooltip.js"></script>
+        <script type="text/javascript" src="./resources/js/tcc_util.js"></script>
+        <script type="text/javascript" src="./resources/js/tabs.js"></script>
+        <link rel="stylesheet" href="./resources/js/poshytip-1.0/src/tip-twitter/tip-twitter.css" type="text/css" />
+        <link rel="stylesheet" href="./resources/js/poshytip-1.0/src/tip-yellowsimple/tip-yellowsimple.css" type="text/css" />
+        <script type="text/javascript" src="./resources/js/poshytip-1.0/src/jquery.poshytip.min.js"></script>
+        <link href="./resources/css/zebra_dialog.css"   rel="stylesheet" type="text/css" />
+        <link href="./resources/css/zebra_tooltip.css"   rel="stylesheet" type="text/css" />
+        <link href="./resources/css/Principal.css"   rel="stylesheet" type="text/css" />
+        <link href="./resources/css/toolbar.css"   rel="stylesheet" type="text/css" />
+        <link href="./resources/css/tabHome.css"   rel="stylesheet" type="text/css" />
+        <link href="./resources/css/tabMovimentos.css"   rel="stylesheet" type="text/css" />
+        <title>SISCONFIP</title>
+    </h:head> 
+
+    <h:body>
+
+        <div id="ControlTransition" style="display: none;" class="transition"></div>
+
+        <div id="container">
+            <p:outputPanel layout="block" id="header"> 
+                <h:form>
+                    <div class="logotipo">
+                    </div>
+                    <div class="welcome">
+                        <p:remoteCommand name="updateWelcome" update="gridWelcome" process="@this"/>
+                        <h:panelGrid id="gridWelcome" columns="3" cellspacing="10" style="font-size: 12px; font-family: Tahoma, Verdana, Arial; color: #FFFFFF; margin-top: -6px;">
+                            <p:graphicImage alt="Usuário"  url="./resources/img/username_background.png"/>
+                            <h:outputLabel id="nome" value="#{ManagePrincipal.usuario.nome}" style="cursor: pointer; "/>
+                            <h:outputLabel id="username" value="[#{ManagePrincipal.usuario.username}]"/>
+                        </h:panelGrid>
+                    </div>
+                    <p:commandLink id="logoff" styleClass="logoff" ajax="false" action="#{ManagePrincipal.logoff('index')}"/>
+                    <pe:tooltip for="logoff" value="Sair do sistema" showEffect="fadeIn"  
+                                hideEffect="fadeIn" showDelay="0" position="right center" targetPosition="left center"/>
+
+                </h:form> 
+            </p:outputPanel>
+
+            <p:outputPanel layout="block" id="content">
+                <p:tabView id="tabPrincipal" style="font-size: 10px; border: 1px #e3e3e3 solid;" activeIndex="#{ManagePrincipal.activeIndex}"> 
+                    <p:tab title="Home" id="tabHome">
+                        <f:facet name="title">
+                            <p:graphicImage url="/resources/img/tab_home.png" />
+                        </f:facet>
+                        <ui:include src="/resources/views/tabHome.xhtml"/>
+                    </p:tab>   
+                    <p:tab title="Conta" id="tabConta">                                    
+                        <f:facet name="title">
+                            <p:graphicImage style="margin-bottom: -4px;" url="/resources/img/tipo_conta.png" />
+                            <h:outputText value="Conta" style="font-size: 11px;" styleClass="bold tcc_font_family"/>
+                        </f:facet>
+                        <ui:include src="/resources/views/tabConta.xhtml"/>
+                    </p:tab>
+                    <p:tab id="tabContasReceber">
+                        <f:facet name="title">
+                            <p:graphicImage style="margin-bottom: -4px; margin-right: 2px;" url="/resources/img/money.png" />
+                            <h:outputText value="Contas Receber" style="font-size: 11px;" styleClass="bold tcc_font_family"/>
+                        </f:facet>
+                        <ui:include src="/resources/views/tabContasReceber.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Contas Pagar" id="tabMovimentos">
+                        <f:facet name="title">
+                            <p:graphicImage style="margin-bottom: -4px; margin-right: 2px;" url="/resources/img/money_minus.png" />
+                            <h:outputText value="Contas a Pagar" style="font-size: 11px;" styleClass="bold tcc_font_family"/>
+                        </f:facet>
+                        <ui:include src="/resources/views/tabContasPagar.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Movimentos" id="tabContasPagar">
+                        <f:facet name="title">
+                            <p:graphicImage style="margin-bottom: -4px; margin-right: 2px;" url="/resources/img/movimentos.png" />
+                            <h:outputText value="Movimentos" style="font-size: 11px;" styleClass="bold tcc_font_family"/>
+                        </f:facet>
+                        <ui:include src="/resources/views/tabMovimentos.xhtml"/>
+                    </p:tab>
+                    <p:tab title="Relatório Contas Receber" id="tabRelatContasReceber">
+                        <f:facet name="title">
+                            <p:graphicImage style="margin-bottom: -4px; margin-right: 2px;" url="/resources/img/menu_relatorio.png" />
+                            <h:outputText value="Relatório Contas a Receber" style="font-size: 11px;" styleClass="bold tcc_font_family"/>
+                        </f:facet>
+                        <ui:include src="/resources/views/tabRelatContasRec.xhtml"/>
+                    </p:tab> 
+                    <p:tab title="Relatório Contas Pagar" id="tabRelatContasPagar">
+                        <f:facet name="title">
+                            <p:graphicImage style="margin-bottom: -4px; margin-right: 2px;" url="/resources/img/menu_relatorio.png" />
+                            <h:outputText value="Relatório Contas a Pagar" style="font-size: 11px;" styleClass="bold tcc_font_family"/>
+                        </f:facet>
+                        <ui:include src="/resources/views/tabRelatContasPag.xhtml"/>
+                    </p:tab> 
+                    <p:tab  id="tabRelatFluxoCaixa">
+                        <f:facet name="title">
+                            <p:graphicImage style="margin-bottom: -4px; margin-right: 2px;" url="/resources/img/menu_relatorio.png" />
+                            <h:outputText value="Relatório de Fluxo de Caixa" style="font-size: 11px;" styleClass="bold tcc_font_family"/>
+                        </f:facet>
+                        <ui:include src="/resources/views/tabRelatFluxoCaixa.xhtml"/>
+                    </p:tab>
+                </p:tabView>
+            </p:outputPanel>
+            <!-- MOSTRA O SALDO NA BARRA LATERAL -->
+            <p:outputPanel layout="block" id="sidebar">
+                <p:outputPanel id="sidebarContent" layout="block" style="margin-left: 12px;">
+                    <p:calendar mode="inline" style="font-size: 14px;" id="inlineCal"/>
+                    <p:panel id="panelInformation" style="margin-top: 5px; width: 213px; height: 70px">
+                        <h:panelGrid id="gridInformation" columns="2">
+                            <p:graphicImage url="/resources/img/saldo.png" />
+                            <h:outputLabel value="#{ManageTabHome.retornaSaldoDinheiro()}" styleClass="#{ManageTabHome.retornaPosNeg(ManageTabHome.saldo)}" style="text-decoration: underline; margin-left: 5px; font-size: 15px; font-weight: bold; font-family: Tahoma,Verdana,Times,serif;"/>
+                        </h:panelGrid>
+                    </p:panel>
+                    <h:panelGrid columns="2" style="height: 70px;margin-top: 5px; font-size: 12px; border: 1px #e3e3e3 solid" rendered="#{!ManagePrincipal.retornaContasPagasVencidas()}">
+                        <p:column>
+                            <p:graphicImage url="/resources/img/accept1.png"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel style="color: #68bb3b" value="Não existem " />
+                            <h:outputLabel style="color: #68bb3b" styleClass="bold" value="contas a pagar " />
+                            <h:outputLabel style="color: #68bb3b" value="vencidas." />
+                        </p:column>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" style="height: 70px; margin-top: 5px; font-size: 12px; border: 1px #e3e3e3 solid;" rendered="#{ManagePrincipal.retornaContasPagasVencidas()}">
+                        <p:column>
+                            <p:graphicImage url="/resources/img/close1.png"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText style="color: #e46a6a" value="Existem " />
+                            <h:outputText style="color: #e46a6a" styleClass="bold" value="contas a pagar " />
+                            <h:outputText style="color: #e46a6a" value="que estão vencidas." />
+                        </p:column>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" style="height: 70px;margin-top: 5px; font-size: 12px; border: 1px #e3e3e3 solid" rendered="#{!ManagePrincipal.retornaContasRecVencidas()}">
+                        <p:column>
+                            <p:graphicImage url="/resources/img/accept1.png"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel style="color: #68bb3b" value="Não existem " />
+                            <h:outputLabel style="color: #68bb3b" styleClass="bold" value="contas a receber " />
+                            <h:outputLabel style="color: #68bb3b" value="vencidas." />
+                        </p:column>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" style="height: 70px;margin-top: 5px; font-size: 12px; border: 1px #e3e3e3 solid" rendered="#{ManagePrincipal.retornaContasRecVencidas()}">
+                        <p:column>
+                            <p:graphicImage url="/resources/img/close1.png"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText style="color: #e46a6a" value="Existem " />
+                            <h:outputText style="color: #e46a6a" styleClass="bold" value="contas a receber " />
+                            <h:outputText style="color: #e46a6a" value="que estão vencidas." />
+                        </p:column>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </p:outputPanel>
+
+            <!-- 
+            LIXEIRA COMO MENU DE ALTERAÇÃO
+            -->
+            <h:form>
+                <script type="text/javascript">
+                    function removerUsuario() {
+                        $.Zebra_Dialog('Excluindo sua conta todos os dados serão perdidos.\nDeseja <strong>realmente</strong> excluí-lá?.', {
+                            'type': 'question',
+                            'title': 'Atenção',
+                            'buttons': ['Sim!', 'Não!'],
+                            'onClose': function(caption) {
+                                if (caption == 'Sim!') {
+                                    deleteContaUsuario();
+                                }
+                            }
+                        });
+                    }
+                </script>
+                <p:remoteCommand name="deleteContaUsuario"  process="@this" actionListener="#{ManagePrincipal.deleteContaUsuario()}"/>
+                <p:stack icon="./resources/img/stack.png" expanded="true">  
+                    <p:menuitem styleClass="stack_Remover" value="Excluir" icon="./resources/img/user_delete.png" onclick="removerUsuario()"/>
+                    <p:menuitem styleClass="stack_Alterar" value="Alterar" icon="./resources/img/user_edit.png" onclick="dlg_AlteraUsuario.show()"/>
+                </p:stack> 
+            </h:form>
+
+            <p:outputPanel layout="block" id="footer">
+
+            </p:outputPanel>
+
+            <!--
+            DIALOG PARA ALTERAÇÃO DE USUÁRIO
+            -->
+            <p:dialog id="dlg_idAlteraUsuario" widgetVar="dlg_AlteraUsuario" closable="false" style="width: 100px; height: 100px; font-size: 12px;" resizable="false" modal="true">
+                <f:facet name="header">
+                    <p:graphicImage url="./resources/img/user_edit32.png" />
+                    <h:outputText value="Alteração dos dados do usuário" style="margin-left: 10px; font-size: 14px; font-family: Tahoma, Verdana, Arial"/>
+                </f:facet>
+                <h:form prependId="false">
+                    <p:outputPanel layout="block">
+                        <p:growl id="growlAlteraUsuario" sticky="false" life="5000" autoUpdate="false"/>
+                        <h:panelGrid id="alteraUsuario" columns="4" cellspacing="12" styleClass="style_forms" style="border: none !important; font-size: 12px; font-family: Tahoma, Verdana, Arial">
+                            <h:outputLabel for="alteraNome" value="Nome *" style="color: #0072c6;"/>
+                            <p:inputText id="alteraNome" value="#{ManagePrincipal.usuario.nome}" size="50" required="true" requiredMessage="Nome é obrigatório."/>
+                            <h:outputLabel value="Data Cadastro"/>
+                            <h:outputLabel style="font-weight: bold; text-decoration: underline" value="#{ManagePrincipal.DataFormatada(ManagePrincipal.usuario.dataCriacao)}" size="10"/>                                   
+                            <h:outputLabel for="alteraUsername" value="Login" />
+                            <p:inputText id="alteraUsername" disabled="true" style="font-weight: bold" value="#{ManagePrincipal.usuario.username}" size="25" />
+                            <h:outputLabel for="alteraEmail" value="Email *" style="margin-left: -100px; color: #0072c6;"/>
+                            <p:inputText id="alteraEmail" value="#{ManagePrincipal.usuario.email}" size="30" style="margin-left: -100"
+                                         validatorMessage="#{ManagePrincipal.usuario.username} Email digitado é inválido!"
+                                         requiredMessage="E-mail é obrigatório!" disabled="true">
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                            </p:inputText>
+
+                            <h:outputLabel for="pwd1" value="Nova Senha: *" style="color: #0072c6;"/>  
+                            <p:password id="pwd1" value="#{ManagePrincipal.usuario.password}" redisplay="true" match="pwd2" label="Nova Senha" 
+                                        validatorMessage="As senhas não se correspodem ou não atende a regra de formação." required="true" size="30" maxlength="18" >
+                                <f:validateRegex pattern="^.*(?=.{5,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$" />
+                            </p:password>
+
+                            <h:outputLabel for="pwd2" value="Confirmação *" style="margin-left: -100px; color: #0072c6;"/>  
+
+                            <p:password id="pwd2" value="#{ManagePrincipal.usuario.password}" redisplay="true" label="Password 2" required="true" style="margin-left: -100px" size="30" maxlength="18"/> 
+
+                        </h:panelGrid>
+
+                        <h:outputLabel value="* Regra de formação de senha: mínimo 5 caracteres contendo 1 caracter mínusculo, 1 maiúsculo e 1 número." style="color: #D50000; font-size: 12px; font-family: Tahoma, Verdana, Arial"/>
+
+                        <p:separator id="separator"/> 
+                        <p:commandButton id="alteraSalvar" value="Salvar" icon="save_button" style="font-size: 11px; margin-top: 10px;" 
+                                         process="@form" update="alteraUsuario growlAlteraUsuario" actionListener="#{ManagePrincipal.salvaUsuario()}"/>
+                        <p:commandButton value="Fechar" process="@this" icon="exit" style="font-size: 11px; margin-left: 30px; margin-top: 10px;" onclick="updateWelcome();" oncomplete="dlg_AlteraUsuario.hide()" />
+                    </p:outputPanel>
+                </h:form>
+            </p:dialog>
+        </div>
+        <div id="tcc_progress" layout="block" class="tcc_progressbar_container" style="bottom: -36px; ">
+            <div id="tcc_progress2" layout="block" class="tcc_progressbar"/>
+        </div>
+        <script type="text/javascript">
+            $('.stack_Alterar').poshytip({
+                content: 'Alterar os dados do usuário',
+                className: 'tip-twitter',
+                showTimeout: 1,
+                alignTo: 'target',
+                alignX: 'left',
+                offsetX: 65,
+                offsetY: -5,
+                allowTipHover: false,
+                slide: true
+            });
+            $('.stack_Remover').poshytip({
+                content: 'Remover permanentemente o usuário',
+                className: 'tip-twitter',
+                showTimeout: 1,
+                alignTo: 'target',
+                alignX: 'left',
+                offsetX: 65,
+                offsetY: -5,
+                allowTipHover: false,
+                slide: true
+            });
+        </script>
+    </h:body>
+</html>
